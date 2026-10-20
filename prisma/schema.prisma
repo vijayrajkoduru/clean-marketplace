@@ -1,0 +1,242 @@
+// Database schema for the Clean home-services marketplace.
+// Local development uses SQLite (no setup needed). To move to PostgreSQL,
+// change provider to "postgresql", point DATABASE_URL at the server and run
+// `npx prisma migrate dev --name init` once to create fresh migrations.
+// Money is stored in whole rupees. JSON lists are stored as text.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String    @unique
+  state        String
+  active       Boolean   @default(true)
+  slotCapacity Int       @default(4)
+  createdAt    DateTime  @default(now())
+  addresses    Address[]
+  bookings     Booking[]
+  partners     Partner[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  tagline     String
+  description String
+  icon        String
+  image       String?
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  services    Service[]
+}
+
+model Service {
+  id           String           @id @default(cuid())
+  slug         String           @unique
+  categoryId   String
+  category     Category         @relation(fields: [categoryId], references: [id])
+  name         String
+  summary      String
+  description  String
+  image        String?
+  includes     String           @default("[]")
+  excludes     String           @default("[]")
+  faqs         String           @default("[]")
+  active       Boolean          @default(true)
+  featured     Boolean          @default(false)
+  sortOrder    Int              @default(0)
+  ratingSum    Int              @default(0)
+  ratingCount  Int              @default(0)
+  createdAt    DateTime         @default(now())
+  variants     ServiceVariant[]
+  bookingItems BookingItem[]
+
+  @@index([categoryId])
+}
+
+model ServiceVariant {
+  id           String        @id @default(cuid())
+  serviceId    String
+  service      Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  name         String
+  price        Int
+  mrp          Int?
+  durationMins Int
+  sortOrder    Int           @default(0)
+  active       Boolean       @default(true)
+  bookingItems BookingItem[]
+
+  @@index([serviceId])
+}
+
+model User {
+  id        String    @id @default(cuid())
+  phone     String    @unique
+  name      String?
+  email     String?
+  role      String    @default("CUSTOMER") // CUSTOMER | PARTNER | ADMIN
+  createdAt DateTime  @default(now())
+  sessions  Session[]
+  addresses Address[]
+  bookings  Booking[]
+  partner   Partner?
+  reviews   Review[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model OtpCode {
+  id         String    @id @default(cuid())
+  phone      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, createdAt])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String   @default("Home")
+  line1     String
+  line2     String?
+  landmark  String?
+  cityId    String
+  city      City     @relation(fields: [cityId], references: [id])
+  pincode   String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Partner {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cityId          String
+  city            City      @relation(fields: [cityId], references: [id])
+  skills          String    @default("[]") // JSON list of category ids
+  experienceYears Int       @default(0)
+  bio             String?
+  idProofType     String?
+  idProofLast4    String?
+  status          String    @default("PENDING") // PENDING | APPROVED | REJECTED | SUSPENDED
+  createdAt       DateTime  @default(now())
+  jobs            Booking[]
+  reviews         Review[]
+}
+
+model Booking {
+  id                String         @id @default(cuid())
+  code              String         @unique
+  customerId        String
+  customer          User           @relation(fields: [customerId], references: [id])
+  partnerId         String?
+  partner           Partner?       @relation(fields: [partnerId], references: [id])
+  cityId            String
+  city              City           @relation(fields: [cityId], references: [id])
+  address           String // JSON snapshot of the address at booking time
+  scheduledAt       DateTime
+  status            String // PENDING_PAYMENT | CONFIRMED | ASSIGNED | ON_THE_WAY | IN_PROGRESS | COMPLETED | CANCELLED
+  paymentMethod     String // PAY_AFTER_SERVICE | ONLINE
+  paymentStatus     String         @default("UNPAID") // UNPAID | PAID | REFUND_DUE | REFUNDED
+  subtotal          Int
+  discount          Int            @default(0)
+  fee               Int            @default(0)
+  total             Int
+  couponCode        String?
+  startCode         String
+  notes             String?
+  razorpayOrderId   String?        @unique
+  razorpayPaymentId String?
+  cancelReason      String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  items             BookingItem[]
+  events            BookingEvent[]
+  review            Review?
+
+  @@index([customerId])
+  @@index([partnerId])
+  @@index([cityId, scheduledAt])
+  @@index([status])
+}
+
+model BookingItem {
+  id           String         @id @default(cuid())
+  bookingId    String
+  booking      Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceId    String
+  service      Service        @relation(fields: [serviceId], references: [id])
+  variantId    String
+  variant      ServiceVariant @relation(fields: [variantId], references: [id])
+  serviceName  String
+  variantName  String
+  unitPrice    Int
+  quantity     Int
+  durationMins Int
+
+  @@index([bookingId])
+}
+
+model BookingEvent {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  status    String
+  note      String?
+  actor     String // CUSTOMER | PARTNER | ADMIN | SYSTEM
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  partnerId String?
+  partner   Partner? @relation(fields: [partnerId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  description String
+  type        String // PERCENT | FLAT
+  value       Int
+  minOrder    Int       @default(0)
+  maxDiscount Int?
+  active      Boolean   @default(true)
+  expiresAt   DateTime?
+  usageLimit  Int?
+  usedCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+}

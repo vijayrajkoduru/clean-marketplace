@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
+/* Brand: deep teal for trust and freshness, saffron for offers and ratings. */
+@theme {
+  --color-brand-50: #eefbf8;
+  --color-brand-100: #d6f5ee;
+  --color-brand-200: #ade9dc;
+  --color-brand-300: #78d6c2;
+  --color-brand-400: #3dbca3;
+  --color-brand-500: #16a088;
+  --color-brand-600: #0d8270;
+  --color-brand-700: #0b685a;
+  --color-brand-800: #0a5248;
+  --color-brand-900: #083f38;
+  --color-ink: #0f1a24;
+  --color-muted: #586473;
+  --color-line: #e3e8ed;
+  --color-surface: #f5f7f6;
+  --color-saffron: #f4a321;
+  --color-saffron-50: #fff7e8;
+  --color-danger: #c2341f;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 bg-brand-700 text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700;
+  }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 bg-ink text-white hover:bg-black;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 border border-line bg-white text-ink hover:border-brand-600 hover:text-brand-700;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 text-ink hover:bg-surface;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-white;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-100;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700;
+  }
+  .section-title {
+    @apply text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+  }
+  /* Long-form text on the about, help and legal pages. */
+  .prose-page {
+    @apply max-w-3xl text-[15px] leading-7 text-ink/90;
+  }
+  .prose-page h2 {
+    @apply mt-10 mb-3 text-xl font-bold text-ink;
+  }
+  .prose-page h3 {
+    @apply mt-6 mb-2 font-semibold text-ink;
+  }
+  .prose-page p {
+    @apply my-3;
+  }
+  .prose-page ul {
+    @apply my-3 list-disc space-y-1.5 pl-6;
+  }
+  .prose-page ol {
+    @apply my-3 list-decimal space-y-1.5 pl-6;
+  }
+  .prose-page a {
+    @apply font-semibold text-brand-700 underline-offset-2 hover:underline;
+  }
 }

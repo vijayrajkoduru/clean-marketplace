@@ -1,0 +1,95 @@
+Category,Service,Option,Price,Original price,Minutes,Service key
+Cleaning,Full home deep cleaning,1 BHK,3299,3999,240,full-home-deep-cleaning
+Cleaning,Full home deep cleaning,2 BHK,4499,5499,300,full-home-deep-cleaning
+Cleaning,Full home deep cleaning,3 BHK,5999,7199,360,full-home-deep-cleaning
+Cleaning,Full home deep cleaning,4 BHK,7499,8999,420,full-home-deep-cleaning
+Cleaning,Bathroom deep cleaning,1 bathroom,499,599,60,bathroom-deep-cleaning
+Cleaning,Bathroom deep cleaning,2 bathrooms,899,1098,105,bathroom-deep-cleaning
+Cleaning,Bathroom deep cleaning,3 bathrooms,1299,1647,150,bathroom-deep-cleaning
+Cleaning,Kitchen deep cleaning,Empty kitchen,1299,1599,150,kitchen-deep-cleaning
+Cleaning,Kitchen deep cleaning,Occupied kitchen,1599,1899,180,kitchen-deep-cleaning
+Cleaning,Sofa shampoo cleaning,3 seats,599,749,60,sofa-cleaning
+Cleaning,Sofa shampoo cleaning,5 seats,899,1099,90,sofa-cleaning
+Cleaning,Sofa shampoo cleaning,7 seats,1199,1449,120,sofa-cleaning
+Cleaning,Carpet shampoo cleaning,Up to 25 sq ft,399,499,60,carpet-cleaning
+Cleaning,Carpet shampoo cleaning,Up to 50 sq ft,699,849,90,carpet-cleaning
+Cleaning,Mattress cleaning,Single,449,549,45,mattress-cleaning
+Cleaning,Mattress cleaning,Double,649,799,60,mattress-cleaning
+Cleaning,Water tank cleaning,"Up to 1,000 litres",699,849,90,water-tank-cleaning
+Cleaning,Water tank cleaning,"Up to 2,000 litres",999,1199,120,water-tank-cleaning
+Cleaning,Water tank cleaning,"Sump up to 5,000 litres",1499,1799,150,water-tank-cleaning
+Cleaning,Move-in or move-out cleaning,1 BHK,2999,3599,210,move-in-move-out-cleaning
+Cleaning,Move-in or move-out cleaning,2 BHK,3999,4799,270,move-in-move-out-cleaning
+Cleaning,Move-in or move-out cleaning,3 BHK,4999,5999,330,move-in-move-out-cleaning
+AC and appliance repair,AC service with foam jet,Split AC,549,699,60,ac-service
+AC and appliance repair,AC service with foam jet,Window AC,499,599,60,ac-service
+AC and appliance repair,AC service with foam jet,2 split ACs,999,1398,105,ac-service
+AC and appliance repair,AC repair,Visit and diagnosis,299,,45,ac-repair
+AC and appliance repair,AC installation and uninstallation,Split AC installation,1499,1799,120,ac-installation
+AC and appliance repair,AC installation and uninstallation,Window AC installation,799,999,60,ac-installation
+AC and appliance repair,AC installation and uninstallation,Split AC uninstallation,699,849,60,ac-installation
+AC and appliance repair,Washing machine repair,Visit and diagnosis,299,,45,washing-machine-repair
+AC and appliance repair,Refrigerator repair,Visit and diagnosis,299,,45,refrigerator-repair
+AC and appliance repair,RO water purifier service,Service and cleaning,399,499,45,ro-water-purifier-service
+AC and appliance repair,RO water purifier service,Service with filter set replacement,1499,1799,60,ro-water-purifier-service
+AC and appliance repair,Microwave repair,Visit and diagnosis,249,,45,microwave-repair
+Electrician,Fan installation or repair,Ceiling fan installation,149,199,30,fan-installation-repair
+Electrician,Fan installation or repair,Fan repair,199,249,45,fan-installation-repair
+Electrician,Fan installation or repair,Exhaust fan installation,199,249,30,fan-installation-repair
+Electrician,Switch and socket repair,Switch or socket replacement,99,129,20,switch-socket-repair
+Electrician,Switch and socket repair,Switchboard repair,249,299,45,switch-socket-repair
+Electrician,Light installation,Tube or LED light,129,149,20,light-installation
+Electrician,Light installation,Chandelier,699,849,90,light-installation
+Electrician,Light installation,"Decorative lights, per 10 metres",299,349,45,light-installation
+Electrician,Inverter installation,Inverter and battery,549,649,60,inverter-installation
+Electrician,Electrical wiring check,Visit and inspection,249,,45,wiring-inspection
+Plumber,Tap and mixer repair,Tap repair,99,129,20,tap-mixer-repair
+Plumber,Tap and mixer repair,Tap replacement,149,179,30,tap-mixer-repair
+Plumber,Tap and mixer repair,Wall mixer installation,349,449,45,tap-mixer-repair
+Plumber,Leakage repair,Exposed pipe leak repair,199,249,45,leakage-repair
+Plumber,Leakage repair,Concealed leak inspection,299,,60,leakage-repair
+Plumber,Toilet repair and installation,Flush tank repair,249,299,45,toilet-repair
+Plumber,Toilet repair and installation,Western toilet installation,1299,1599,120,toilet-repair
+Plumber,Drain blockage removal,Sink or basin,299,349,45,drain-blockage-removal
+Plumber,Drain blockage removal,Bathroom drain,349,399,45,drain-blockage-removal
+Plumber,Water motor installation and repair,Motor installation,499,599,60,water-motor-installation
+Plumber,Water motor installation and repair,Motor repair visit,299,,45,water-motor-installation
+Carpenter,Furniture repair,Visit and diagnosis,249,,45,furniture-repair
+Carpenter,Door lock and hinge work,Lock installation,199,249,30,door-lock-installation
+Carpenter,Door lock and hinge work,Door hinge or alignment,249,299,45,door-lock-installation
+Carpenter,Furniture assembly,Bed,599,699,90,furniture-assembly
+Carpenter,Furniture assembly,Wardrobe,799,949,120,furniture-assembly
+Carpenter,Furniture assembly,Table or chair,249,299,45,furniture-assembly
+Carpenter,"Curtain rods, shelves and TV mounting","Curtain rod, per window",149,179,30,curtain-rod-shelf-installation
+Carpenter,"Curtain rods, shelves and TV mounting",Wall shelf,199,249,30,curtain-rod-shelf-installation
+Carpenter,"Curtain rods, shelves and TV mounting",TV wall mount,449,549,45,curtain-rod-shelf-installation
+Pest control,Cockroach and ant control,1 BHK,899,1099,60,cockroach-ant-control
+Pest control,Cockroach and ant control,2 BHK,1099,1349,75,cockroach-ant-control
+Pest control,Cockroach and ant control,3 BHK,1399,1699,90,cockroach-ant-control
+Pest control,Termite control,1 BHK,2999,3599,150,termite-control
+Pest control,Termite control,2 BHK,3999,4799,180,termite-control
+Pest control,Termite control,3 BHK,4999,5999,210,termite-control
+Pest control,Bed bug control,1 BHK,1499,1799,90,bed-bug-control
+Pest control,Bed bug control,2 BHK,1899,2299,120,bed-bug-control
+Pest control,Mosquito control,Home and surroundings,799,949,45,mosquito-control
+Salon for women,Waxing,Full arms and underarms,449,549,45,waxing
+Salon for women,Waxing,"Full arms, full legs and underarms",849,999,75,waxing
+Salon for women,Waxing,Full body with Rica wax,1999,2399,120,waxing
+Salon for women,Facial and cleanup,Cleanup,599,699,45,facial-cleanup
+Salon for women,Facial and cleanup,Fruit facial,899,1099,60,facial-cleanup
+Salon for women,Facial and cleanup,Gold facial,1299,1599,75,facial-cleanup
+Salon for women,Manicure and pedicure,Manicure,449,549,40,manicure-pedicure
+Salon for women,Manicure and pedicure,Pedicure,549,649,45,manicure-pedicure
+Salon for women,Manicure and pedicure,Manicure and pedicure,899,1099,80,manicure-pedicure
+Salon for women,Hair spa,Hair spa,899,1099,60,hair-spa
+Salon for women,Hair spa,Hair spa and blow dry,1199,1449,75,hair-spa
+Salon for men,Haircut,Haircut,249,299,30,mens-haircut
+Salon for men,Haircut,Haircut and beard,349,449,45,mens-haircut
+Salon for men,Beard grooming,Beard trim and styling,149,199,20,beard-grooming
+Salon for men,Facial and cleanup for men,Cleanup,499,599,40,mens-facial
+Salon for men,Facial and cleanup for men,De-tan facial,799,949,60,mens-facial
+Salon for men,Head massage,20 minutes,249,299,20,head-massage
+Salon for men,Head massage,40 minutes,449,549,40,head-massage
+Painting and waterproofing,Room and home painting,Single room repaint,4999,5999,480,room-painting
+Painting and waterproofing,Room and home painting,1 BHK repaint (2 days),12999,15499,960,room-painting
+Painting and waterproofing,Waterproofing inspection,Site inspection and quote,199,,45,waterproofing-inspection

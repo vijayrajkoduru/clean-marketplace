@@ -1,0 +1,78 @@
+"use client";
+
+import { useActionState, useState, useTransition } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { addAddress, deleteAddress, saveProfile, type FormState } from "@/app/actions/account";
+import { AddressFields, type CityChoice } from "@/components/address-fields";
+
+function Message({ state }: { state: FormState }) {
+  if (state.error) return <p className="text-sm text-danger" role="alert">{state.error}</p>;
+  if (state.message) return <p className="text-sm font-medium text-emerald-700" role="status">{state.message}</p>;
+  return null;
+}
+
+export function ProfileForm({ name, email, phone }: { name: string; email: string; phone: string }) {
+  const [state, save, saving] = useActionState<FormState, FormData>(saveProfile, {});
+  return (
+    <form action={save} className="mt-4 space-y-4">
+      <div>
+        <label className="label" htmlFor="name">Name</label>
+        <input id="name" name="name" className="input" defaultValue={name} autoComplete="name" />
+      </div>
+      <div>
+        <label className="label" htmlFor="email">Email <span className="font-normal text-muted">(optional, for invoices)</span></label>
+        <input id="email" name="email" type="email" className="input" defaultValue={email} autoComplete="email" />
+      </div>
+      <div>
+        <span className="label">Mobile number</span>
+        <p className="input bg-surface text-muted">+91 {phone}</p>
+      </div>
+      <Message state={state} />
+      <button className="btn-primary" disabled={saving}>{saving ? "Saving..." : "Save profile"}</button>
+    </form>
+  );
+}
+
+export function AddAddressForm({ cities }: { cities: CityChoice[] }) {
+  const [open, setOpen] = useState(false);
+  const [state, add, adding] = useActionState<FormState, FormData>(async (prev, form) => {
+    const result = await addAddress(prev, form);
+    if (result.ok) setOpen(false);
+    return result;
+  }, {});
+
+  if (!open) {
+    return (
+      <button type="button" className="btn-outline mt-4" onClick={() => setOpen(true)}>
+        <Plus className="size-4" aria-hidden="true" /> Add address
+      </button>
+    );
+  }
+  return (
+    <form action={add} className="mt-5 space-y-4 border-t border-line pt-5">
+      <AddressFields cities={cities} />
+      <Message state={state} />
+      <div className="flex gap-2">
+        <button className="btn-primary" disabled={adding}>{adding ? "Saving..." : "Save address"}</button>
+        <button type="button" className="btn-ghost" onClick={() => setOpen(false)}>Cancel</button>
+      </div>
+    </form>
+  );
+}
+
+export function DeleteAddressButton({ id }: { id: string }) {
+  const [busy, start] = useTransition();
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={() => {
+        if (confirm("Remove this address?")) start(() => deleteAddress(id));
+      }}
+      className="grid size-9 shrink-0 place-items-center rounded-lg text-muted hover:bg-red-50 hover:text-danger"
+      aria-label="Remove address"
+    >
+      <Trash2 className="size-4" />
+    </button>
+  );
+}
