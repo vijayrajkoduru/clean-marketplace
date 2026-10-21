@@ -1,9 +1,18 @@
 import "server-only";
+import { db } from "./db";
+import { formatDateTime } from "./format";
+import { strings, type Strings } from "@/strings";
 
 /**
- * Outgoing messages. SMS_PROVIDER=console prints to the server log;
- * SMS_PROVIDER=msg91 sends login codes through MSG91's OTP API, which needs
- * a DLT-approved template in MSG91_TEMPLATE_ID.
+ * Outgoing messages.
+ *
+ * Login codes: SMS_PROVIDER=console prints codes in the server log; SMS_PROVIDER=msg91
+ * sends them through MSG91's OTP API, which needs a DLT-approved template in MSG91_TEMPLATE_ID.
+ *
+ * Booking updates: always saved as in-site notifications (the bell in the header). When
+ * WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID and WHATSAPP_TEMPLATE are set, they are also sent
+ * on WhatsApp through Meta's Cloud API. The template needs one body variable, for example:
+ *   "Update from Clean: {{1}}"
  */
 
 export function smsProvider(): "console" | "msg91" {
@@ -26,7 +35,59 @@ export async function sendLoginCode(phone: string, code: string): Promise<void> 
   console.log(`[sms] login code for ${phone}: ${code}`);
 }
 
-/** Booking updates. Logged for now; connect a transactional SMS or WhatsApp provider here. */
-export async function notifyBooking(phone: string, message: string): Promise<void> {
-  console.log(`[notify] ${phone}: ${message}`);
+export function whatsappEnabled(): boolean {
+  return Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_TEMPLATE);
+}
+
+/** Sends a WhatsApp template message. Never throws: a failed message must not fail a booking. */
+async function sendWhatsApp(phone: string, text: string): Promise<void> {
+  const version = process.env.WHATSAPP_API_VERSION || "v21.0";
+  try {
+    const res = await fetch(`https://graph.facebook.com/${version}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: `91${phone}`,
+        type: "template",
+        template: {
+          name: process.env.WHATSAPP_TEMPLATE,
+          language: { code: process.env.WHATSAPP_TEMPLATE_LANGUAGE || "en" },
+          components: [{ type: "body", parameters: [{ type: "text", text: text.slice(0, 1000) }] }],
+        },
+      }),
+    });
+    if (!res.ok) console.error(`[whatsapp] ${res.status} ${(await res.text()).slice(0, 300)}`);
+  } catch (e) {
+    console.error("[whatsapp] send failed", e);
+  }
+}
+
+export type Message = { title: string; body: string; link?: string };
+
+/** Builds a message from the notification texts in src/strings.ts; `when` formats a date. */
+export type Compose = (t: Strings["notify"], when: (date: Date) => string) => Message;
+
+/** Saves an in-site notification for the user and sends it on WhatsApp when that is set up. */
+export async function notifyUser(userId: string, message: Message | Compose): Promise<void> {
+  try {
+    const user = await db.user.findUnique({ where: { id: userId }, select: { phone: true } });
+    if (!user) return;
+    const msg = typeof message === "function" ? message(strings.notify, formatDateTime) : message;
+    await db.notification.create({ data: { userId, title: msg.title, body: msg.body, link: msg.link ?? null } });
+    if (whatsappEnabled()) await sendWhatsApp(user.phone, `${msg.title}. ${msg.body}`);
+    else console.log(`[notify] ${user.phone}: ${msg.title}. ${msg.body}`);
+  } catch (e) {
+    console.error("[notify] failed", e);
+  }
+}
+
+/** Notifies every admin, in the site only. */
+export async function notifyAdmins(msg: Message): Promise<void> {
+  try {
+    const admins = await db.user.findMany({ where: { role: "ADMIN" }, select: { id: true } });
+    if (admins.length) await db.notification.createMany({ data: admins.map((a) => ({ userId: a.id, title: msg.title, body: msg.body, link: msg.link ?? null })) });
+  } catch (e) {
+    console.error("[notify] admins failed", e);
+  }
 }

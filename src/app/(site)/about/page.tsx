@@ -2,34 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { site } from "@/config/site";
 import { TextPage } from "@/components/text-page";
+import { strings, fmt } from "@/strings";
 
-export const metadata: Metadata = { title: "About us", description: `Why we started ${site.name} and how we choose the professionals who visit your home.` };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = strings.about;
+  return { title: t.metaTitle, description: fmt(t.metaDescription, { name: site.name }) };
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const d = strings;
+  const t = d.about;
+  const w = { warranty: site.warrantyDays };
   return (
-    <TextPage title={`About ${site.name}`} intro="Home services that arrive on time, at a fixed price, done by people you can trust.">
-      <p>
-        Finding a good electrician, cleaner or AC technician should not take ten phone calls. Prices change on the doorstep, people do not turn up,
-        and when something goes wrong there is nobody to call. We started {site.name} to fix that.
-      </p>
-      <h2>What we promise</h2>
+    <TextPage title={fmt(t.title, { name: site.name })} intro={t.intro}>
+      <p>{fmt(t.story, { name: site.name })}</p>
+      <h2>{t.promiseTitle}</h2>
       <ul>
-        <li><strong>Fixed prices, shown upfront.</strong> You see the full price before you book. Prices include taxes.</li>
-        <li><strong>Verified professionals.</strong> Every professional is ID-checked and their skills are tested before they take a job.</li>
-        <li><strong>On your schedule.</strong> Pick a time slot that suits you, and reschedule for free up to 2 hours before.</li>
-        <li><strong>{site.warrantyDays}-day warranty.</strong> If the same problem comes back within {site.warrantyDays} days of the visit, we fix it again at no charge.</li>
+        {t.promises.map((p) => (
+          <li key={p.b}><strong>{fmt(p.b, w)}</strong> {fmt(p.t, w)}</li>
+        ))}
       </ul>
-      <h2>How we work with professionals</h2>
+      <h2>{t.prosTitle}</h2>
+      <p>{fmt(t.pros, { share: site.partnerSharePercent })}</p>
       <p>
-        The people who visit your home are independent professionals who partner with us. They choose the jobs they want, keep {site.partnerSharePercent}% of
-        the service price, and get support from our team. Fair pay and respect lead to better work, and better work is what keeps customers coming back.
+        {t.joinQuestion} <Link href="/partner/join">{t.join}</Link>.
       </p>
+      <h2>{t.whereTitle}</h2>
       <p>
-        Are you a skilled professional? <Link href="/partner/join">Join us</Link>.
-      </p>
-      <h2>Where we are</h2>
-      <p>
-        We are based in {site.officeAddress} and serve customers across Telangana and Andhra Pradesh. Write to us at{" "}
+        {fmt(t.where, { address: site.officeAddress })}{" "}
         <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.
       </p>
     </TextPage>

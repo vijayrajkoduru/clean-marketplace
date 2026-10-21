@@ -14,29 +14,31 @@ datasource db {
 }
 
 model City {
-  id           String    @id @default(cuid())
-  slug         String    @unique
-  name         String    @unique
+  id           String          @id @default(cuid())
+  slug         String          @unique
+  name         String          @unique
   state        String
-  active       Boolean   @default(true)
-  slotCapacity Int       @default(4)
-  createdAt    DateTime  @default(now())
+  active       Boolean         @default(true)
+  slotCapacity Int             @default(4)
+  createdAt    DateTime        @default(now())
   addresses    Address[]
   bookings     Booking[]
   partners     Partner[]
+  portfolio    PortfolioItem[]
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  slug        String    @unique
+  id          String          @id @default(cuid())
+  slug        String          @unique
   name        String
   tagline     String
   description String
   icon        String
   image       String?
-  sortOrder   Int       @default(0)
-  active      Boolean   @default(true)
+  sortOrder   Int             @default(0)
+  active      Boolean         @default(true)
   services    Service[]
+  portfolio   PortfolioItem[]
 }
 
 model Service {
@@ -59,6 +61,8 @@ model Service {
   createdAt    DateTime         @default(now())
   variants     ServiceVariant[]
   bookingItems BookingItem[]
+  portfolio    PortfolioItem[]
+  menuCourses  MenuCourse[]
 
   @@index([categoryId])
 }
@@ -73,23 +77,39 @@ model ServiceVariant {
   durationMins Int
   sortOrder    Int           @default(0)
   active       Boolean       @default(true)
+  /// "job": the price is per visit and the customer picks a quantity (1 to 10).
+  /// "plate": the price is per guest (catering); the customer enters the number of guests.
+  unit         String        @default("job")
+  minGuests    Int           @default(0)
+  maxGuests    Int           @default(0)
   bookingItems BookingItem[]
+  menuRules    MenuRule[]
 
   @@index([serviceId])
 }
 
 model User {
-  id        String    @id @default(cuid())
-  phone     String    @unique
-  name      String?
-  email     String?
-  role      String    @default("CUSTOMER") // CUSTOMER | PARTNER | ADMIN
-  createdAt DateTime  @default(now())
-  sessions  Session[]
-  addresses Address[]
-  bookings  Booking[]
-  partner   Partner?
-  reviews   Review[]
+  id            String         @id @default(cuid())
+  phone         String         @unique
+  name          String?
+  email         String?
+  role          String         @default("CUSTOMER") // CUSTOMER | PARTNER | ADMIN
+  createdAt     DateTime       @default(now())
+  sessions      Session[]
+  addresses     Address[]
+  bookings      Booking[]
+  partner       Partner?
+  reviews       Review[]
+  /**
+   * Code this customer shares to refer friends.
+   */
+  referralCode  String?        @unique
+  referredById  String?
+  referredBy    User?          @relation("Referrals", fields: [referredById], references: [id])
+  referrals     User[]         @relation("Referrals")
+  walletEntries WalletEntry[]
+  memberships   Membership[]
+  notifications Notification[]
 }
 
 model Session {
@@ -143,9 +163,15 @@ model Partner {
   idProofType     String?
   idProofLast4    String?
   status          String    @default("PENDING") // PENDING | APPROVED | REJECTED | SUSPENDED
+  /**
+   * Uploaded ID proof and photo, stored outside the public folder.
+   */
+  idDocFile       String?
+  photoFile       String?
   createdAt       DateTime  @default(now())
   jobs            Booking[]
   reviews         Review[]
+  payouts         Payout[]
 }
 
 model Booking {
@@ -172,6 +198,24 @@ model Booking {
   razorpayOrderId   String?        @unique
   razorpayPaymentId String?
   cancelReason      String?
+  /**
+   * Plus membership discount on this booking.
+   */
+  plusDiscount      Int            @default(0)
+  /**
+   * Referral credit used on this booking.
+   */
+  walletUsed        Int            @default(0)
+  /**
+   * Plus membership bought with this booking (included in total).
+   */
+  plusFee           Int            @default(0)
+  /**
+   * Consecutive invoice number, given when the invoice is first issued.
+   */
+  invoiceNo         String?        @unique
+  payoutId          String?
+  payout            Payout?        @relation(fields: [payoutId], references: [id])
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   items             BookingItem[]
@@ -197,6 +241,11 @@ model BookingItem {
   unitPrice    Int
   quantity     Int
   durationMins Int
+  /// Per-plate items (catering): unitPrice is the whole line (platePrice x guests) and quantity is 1.
+  guests       Int?
+  platePrice   Int?
+  /// The dishes chosen, as JSON [{ course, dishes: [name], extra }], copied at booking time.
+  menu         String?
 
   @@index([bookingId])
 }
@@ -239,4 +288,149 @@ model Coupon {
   usageLimit  Int?
   usedCount   Int       @default(0)
   createdAt   DateTime  @default(now())
+}
+
+/**
+ * In-site messages for customers and professionals. Also sent on WhatsApp when it is set up.
+ */
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+/**
+ * A settlement with a professional. amount = earnings - cash they collected.
+ * Positive: paid to the professional. Negative: collected from them.
+ */
+model Payout {
+  id        String    @id @default(cuid())
+  partnerId String
+  partner   Partner   @relation(fields: [partnerId], references: [id])
+  earnings  Int
+  collected Int
+  amount    Int
+  reference String?
+  note      String?
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+
+  @@index([partnerId])
+}
+
+/**
+ * Referral credit. Positive amounts are credits, negative amounts are uses.
+ */
+model WalletEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int
+  reason    String
+  bookingId String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/**
+ * Plus membership: discount and free visits for a year.
+ */
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  price     Int
+  startsAt  DateTime
+  endsAt    DateTime
+  status    String   @default("ACTIVE") // ACTIVE | CANCELLED
+  bookingId String?  @unique
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+/**
+ * Last invoice serial number per financial year, for consecutive GST invoice numbers.
+ */
+model InvoiceCounter {
+  fy   String @id
+  last Int    @default(0)
+}
+
+/// A photo of real finished work for the "Our work" gallery. Photos are stored as files named
+/// in `image` and `beforeImage` (see lib/work-photos.ts) and are public once active.
+model PortfolioItem {
+  id          String    @id @default(cuid())
+  title       String
+  description String    @default("")
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  serviceId   String?
+  service     Service?  @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  cityId      String?
+  city        City?     @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  image       String
+  beforeImage String?
+  width       Int
+  height      Int
+  doneOn      DateTime?
+  featured    Boolean   @default(false)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  @@index([active, createdAt])
+}
+
+/// A course of a service's menu, such as "Veg curries" (catering). A fixed course is always
+/// served in full (for example salad, papad and pickle) and the customer does not choose.
+model MenuCourse {
+  id        String     @id @default(cuid())
+  serviceId String
+  service   Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  name      String
+  fixed     Boolean    @default(false)
+  sortOrder Int        @default(0)
+  dishes    MenuDish[]
+  rules     MenuRule[]
+
+  @@index([serviceId])
+}
+
+model MenuDish {
+  id         String     @id @default(cuid())
+  courseId   String
+  course     MenuCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  name       String
+  veg        Boolean    @default(true)
+  /// Extra per plate for a premium dish (for example mutton), on top of the package price.
+  extraPrice Int        @default(0)
+  active     Boolean    @default(true)
+  sortOrder  Int        @default(0)
+
+  @@index([courseId])
+}
+
+/// How a package (a per-plate variant) uses a course: `included` dishes are in the plate price,
+/// the customer picks between `minPick` and `maxPick`, and each dish beyond `included` adds
+/// `extraPrice` per plate. A course without a rule is not part of the package.
+model MenuRule {
+  id         String         @id @default(cuid())
+  variantId  String
+  variant    ServiceVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     MenuCourse     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  included   Int
+  minPick    Int
+  maxPick    Int
+  extraPrice Int            @default(0)
+
+  @@unique([variantId, courseId])
 }

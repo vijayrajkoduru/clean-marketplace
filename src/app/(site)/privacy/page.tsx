@@ -17,7 +17,7 @@ export default function PrivacyPage() {
         <li><strong>Account:</strong> your mobile number, and your name and email if you add them.</li>
         <li><strong>Bookings:</strong> the services you book, addresses, time slots, notes for the professional, ratings and reviews.</li>
         <li><strong>Payments:</strong> payment status and the Razorpay payment reference. Card, UPI and bank details are handled by Razorpay and never reach us.</li>
-        <li><strong>Professionals:</strong> name, city, skills, experience, the type of ID and its last 4 characters. We never collect full ID numbers online.</li>
+        <li><strong>Professionals:</strong> name, city, skills, experience, the type of ID and its last 4 characters, a photo of the ID proof (we ask for a masked Aadhaar) and an optional profile photo. ID photos are stored privately and only our verification team can see them. The profile photo is shown to the customers a professional visits.</li>
         <li><strong>Technical:</strong> a login cookie that keeps you signed in, and a cart cookie that remembers your cart. We do not use advertising cookies.</li>
       </ul>
 

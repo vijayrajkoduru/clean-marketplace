@@ -20,6 +20,100 @@
   --color-saffron-50: #fff7e8;
   --color-danger: #c2341f;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Motion. Every animation is switched off for people who ask for reduced motion (see the end of this file). */
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-aurora: aurora 16s ease-in-out infinite alternate;
+  --animate-marquee: marquee 45s linear infinite;
+  --animate-gradient: gradient-pan 10s ease infinite;
+  --animate-pulse-ring: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  --animate-word-in: word-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-rise: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shine: shine 1.1s ease;
+  --animate-settle: settle 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes settle {
+    from {
+      transform: scale(1.12);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+  @keyframes aurora {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(8%, -6%) scale(1.15);
+    }
+    100% {
+      transform: translate(-6%, 8%) scale(0.95);
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes gradient-pan {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(22 160 136 / 0.55);
+    }
+    100% {
+      box-shadow: 0 0 0 12px rgb(22 160 136 / 0);
+    }
+  }
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.45em);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes shine {
+    from {
+      transform: translateX(-120%) skewX(-20deg);
+    }
+    to {
+      transform: translateX(220%) skewX(-20deg);
+    }
+  }
 }
 
 :root {
@@ -91,5 +185,128 @@ body {
   }
   .prose-page a {
     @apply font-semibold text-brand-700 underline-offset-2 hover:underline;
+  }
+}
+
+/* ---------- Motion and graphics ---------- */
+
+/*
+ * Scroll reveal. Elements with data-reveal fade and rise in when they scroll into view
+ * (RevealObserver sets data-shown). The hidden start state applies only once the
+ * html element has the js-motion class, so without JavaScript everything stays visible.
+ * Stagger with style={{ "--reveal-delay": "120ms" }}.
+ */
+.js-motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.75s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms),
+    transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+}
+.js-motion [data-reveal="zoom"] {
+  transform: scale(0.94);
+}
+.js-motion [data-reveal="left"] {
+  transform: translateX(-32px);
+}
+.js-motion [data-reveal="right"] {
+  transform: translateX(32px);
+}
+.js-motion [data-reveal][data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+/* The connecting line in "How it works" draws itself when shown. */
+.draw-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.6, 0, 0.2, 1) 0.2s;
+}
+[data-shown] .draw-line,
+html:not(.js-motion) .draw-line {
+  stroke-dashoffset: 0;
+}
+
+@layer components {
+  /* Frosted glass cards that float over photos and gradients. */
+  .glass {
+    @apply border border-white/50 bg-white/75 shadow-xl shadow-brand-900/10 backdrop-blur-md;
+  }
+  .glass-dark {
+    @apply border border-white/15 bg-white/10 backdrop-blur-md;
+  }
+  /* A light sweep across a button or card on hover. Needs `relative overflow-hidden`. */
+  .shine::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    transform: translateX(-120%) skewX(-20deg);
+    pointer-events: none;
+  }
+  .shine:hover::after {
+    animation: var(--animate-shine);
+  }
+  /* Soft dotted pattern behind hero sections. */
+  .dot-grid {
+    background-image: radial-gradient(rgb(11 104 90 / 0.14) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 via-brand-400 to-saffron bg-clip-text text-transparent;
+    background-size: 200% auto;
+    animation: var(--animate-gradient);
+  }
+  /* Edges of a scrolling strip fade out. */
+  .fade-edges {
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  }
+  /* Loading placeholder with a moving highlight. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-xl bg-surface;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+    animation: var(--animate-shine);
+    animation-duration: 1.6s;
+    animation-iteration-count: infinite;
+  }
+}
+
+/* FAQ answers slide open where the browser supports it. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  details.faq::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.35s ease,
+      content-visibility 0.35s allow-discrete;
+  }
+  details.faq[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js-motion [data-reveal] {
+    opacity: 1;
+    transform: none;
   }
 }

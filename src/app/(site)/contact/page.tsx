@@ -2,21 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { site } from "@/config/site";
+import { strings } from "@/strings";
 
-export const metadata: Metadata = { title: "Contact us" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: strings.contact.metaTitle };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const d = strings;
+  const t = d.contact;
   const items = [
-    { icon: Mail, label: "Email", value: site.supportEmail, href: `mailto:${site.supportEmail}` },
-    ...(site.supportPhone ? [{ icon: Phone, label: "Phone", value: site.supportPhone, href: `tel:${site.supportPhone.replace(/\s/g, "")}` }] : []),
-    { icon: Clock, label: "Support hours", value: site.supportHours },
-    { icon: MapPin, label: "Office", value: site.officeAddress },
+    { icon: Mail, label: t.email, value: site.supportEmail, href: `mailto:${site.supportEmail}` },
+    ...(site.supportPhone ? [{ icon: Phone, label: t.phone, value: site.supportPhone, href: `tel:${site.supportPhone.replace(/\s/g, "")}` }] : []),
+    { icon: Clock, label: t.hours, value: site.supportHours },
+    { icon: MapPin, label: t.office, value: site.officeAddress },
   ];
   return (
     <div className="container-page py-10 sm:py-14">
-      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Contact us</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{t.title}</h1>
       <p className="mt-3 max-w-2xl text-lg text-muted">
-        For help with a booking, open it from <Link href="/bookings" className="font-semibold text-brand-700">My bookings</Link> and quote the booking code when you write to us.
+        {t.introBefore} <Link href="/bookings" className="font-semibold text-brand-700">{t.myBookings}</Link> {t.introAfter}
       </p>
       <ul className="mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
         {items.map((i) => (
@@ -30,7 +35,7 @@ export default function ContactPage() {
         ))}
       </ul>
       <p className="mt-8 text-sm text-muted">
-        Looking for quick answers? See the <Link href="/help" className="font-semibold text-brand-700">help centre</Link>.
+        {t.quickBefore} <Link href="/help" className="font-semibold text-brand-700">{t.helpCentre}</Link>.
       </p>
     </div>
   );

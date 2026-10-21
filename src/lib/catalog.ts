@@ -2,6 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "./db";
 import { parseList } from "./format";
+import { dishPhotoFiles, getServiceMenu } from "./menu";
 
 /**
  * Cached catalogue reads. They are part of the prerendered pages and are
@@ -14,6 +15,10 @@ export type Variant = {
   price: number;
   mrp: number | null;
   durationMins: number;
+  /** "plate": the price is per guest (catering) and the customer picks a menu. */
+  unit: "job" | "plate";
+  minGuests: number;
+  maxGuests: number;
 };
 
 export type ServiceCardData = {
@@ -27,6 +32,8 @@ export type ServiceCardData = {
   fromPrice: number;
   fromMrp: number | null;
   durationMins: number;
+  /** "plate" when the starting price is per guest. */
+  priceUnit: "job" | "plate";
   rating: number | null;
   ratingCount: number;
   featured: boolean;
@@ -54,7 +61,8 @@ type ServiceRow = {
   ratingSum: number;
   ratingCount: number;
   category: { slug: string; name: string; image: string | null };
-  variants: Variant[];
+  // The database stores the unit as plain text.
+  variants: (Omit<Variant, "unit"> & { unit: string })[];
 };
 
 function toCard(s: ServiceRow): ServiceCardData {
@@ -70,6 +78,7 @@ function toCard(s: ServiceRow): ServiceCardData {
     fromPrice: cheapest?.price ?? 0,
     fromMrp: cheapest?.mrp ?? null,
     durationMins: cheapest?.durationMins ?? 60,
+    priceUnit: cheapest?.unit === "plate" ? "plate" : "job",
     rating: s.ratingCount ? Math.round((s.ratingSum / s.ratingCount) * 10) / 10 : null,
     ratingCount: s.ratingCount,
     featured: s.featured,
@@ -89,7 +98,7 @@ const serviceCardSelect = {
   variants: {
     where: { active: true },
     orderBy: { sortOrder: "asc" as const },
-    select: { id: true, name: true, price: true, mrp: true, durationMins: true },
+    select: { id: true, name: true, price: true, mrp: true, durationMins: true, unit: true, minGuests: true, maxGuests: true },
   },
 };
 
@@ -147,6 +156,11 @@ export async function getCategory(slug: string) {
 }
 
 export async function getService(slug: string) {
+  return serviceBySlug(slug, dishPhotoFiles());
+}
+
+/** Cached per slug and per set of dish photo files, so new dish photos show without a restart. */
+async function serviceBySlug(slug: string, photoFiles: string) {
   "use cache";
   cacheLife("hours");
   cacheTag("catalog");
@@ -183,7 +197,11 @@ export async function getService(slug: string) {
       price: v.price,
       mrp: v.mrp,
       durationMins: v.durationMins,
+      unit: v.unit === "plate" ? ("plate" as const) : ("job" as const),
+      minGuests: v.minGuests,
+      maxGuests: v.maxGuests,
     })),
+    menu: await getServiceMenu(s.id, photoFiles),
     related: related.map(toCard),
   };
 }
@@ -241,4 +259,57 @@ export async function getCities(): Promise<CityOption[]> {
     orderBy: { name: "asc" },
     select: { id: true, slug: true, name: true, state: true },
   });
+}
+
+export type ServiceReviews = {
+  average: number;
+  count: number;
+  stars: { star: number; count: number }[];
+  latest: { id: string; rating: number; comment: string | null; name: string; date: string }[];
+};
+
+/** Ratings and recent comments for a service. Names are shortened to first name and initial. */
+export async function getServiceReviews(serviceId: string): Promise<ServiceReviews | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("catalog");
+  const where = { booking: { items: { some: { serviceId } } } };
+  const [grouped, latest] = await Promise.all([
+    db.review.groupBy({ by: ["rating"], where, _count: { _all: true } }),
+    db.review.findMany({
+      where,
+      orderBy: [{ createdAt: "desc" }],
+      take: 30,
+      select: { id: true, rating: true, comment: true, createdAt: true, user: { select: { name: true } } },
+    }),
+  ]);
+  const count = grouped.reduce((n, g) => n + g._count._all, 0);
+  if (!count) return null;
+  const sum = grouped.reduce((n, g) => n + g.rating * g._count._all, 0);
+  const shortName = (name: string | null) => {
+    const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "Customer";
+    return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.` : parts[0];
+  };
+  // Reviews with a comment first, newest first within each group.
+  const sorted = [...latest].sort((a, b) => Number(Boolean(b.comment)) - Number(Boolean(a.comment)));
+  return {
+    average: Math.round((sum / count) * 10) / 10,
+    count,
+    stars: [5, 4, 3, 2, 1].map((star) => ({ star, count: grouped.find((g) => g.rating === star)?._count._all ?? 0 })),
+    latest: sorted.slice(0, 8).map((r) => ({
+      id: r.id,
+      rating: r.rating,
+      comment: r.comment,
+      name: shortName(r.user.name),
+      date: r.createdAt.toISOString(),
+    })),
+  };
+}
+
+export async function getCity(slug: string): Promise<CityOption | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("cities");
+  return db.city.findFirst({ where: { slug, active: true }, select: { id: true, slug: true, name: true, state: true } });
 }

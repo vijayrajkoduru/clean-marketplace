@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { cancelBooking, confirmOnlinePayment, rateBooking, rescheduleBooking } from "@/app/actions/booking";
 import { SlotPicker, type SlotDayData } from "@/components/slot-picker";
 import { site } from "@/config/site";
+import { strings, fmt } from "@/strings";
 
 type RazorpayResponse = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string };
 type RazorpayInstance = { open: () => void; on: (event: string, cb: (r: { error?: { description?: string } }) => void) => void };
@@ -27,6 +28,7 @@ function loadCheckout(): Promise<boolean> {
 
 /** Opens Razorpay Checkout and confirms the payment on the server. */
 export function PayNow({ code, orderId, keyId, amount, name, phone }: { code: string; orderId: string; keyId: string; amount: number; name: string; phone: string }) {
+  const t = strings.booking;
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
 
@@ -34,7 +36,7 @@ export function PayNow({ code, orderId, keyId, amount, name, phone }: { code: st
     setError("");
     const ok = await loadCheckout();
     if (!ok || !window.Razorpay) {
-      setError("Could not load the payment window. Check your connection and try again.");
+      setError(t.payLoadError);
       return;
     }
     const rzp = new window.Razorpay({
@@ -43,7 +45,7 @@ export function PayNow({ code, orderId, keyId, amount, name, phone }: { code: st
       amount: amount * 100,
       currency: "INR",
       name: site.name,
-      description: `Booking ${code}`,
+      description: fmt(t.payDescription, { code }),
       prefill: { name, contact: `+91${phone}` },
       theme: { color: "#0b685a" },
       handler: (r: RazorpayResponse) => {
@@ -53,26 +55,26 @@ export function PayNow({ code, orderId, keyId, amount, name, phone }: { code: st
         });
       },
     });
-    rzp.on("payment.failed", (r) => setError(r.error?.description ?? "The payment did not go through. You can try again."));
+    rzp.on("payment.failed", (r) => setError(r.error?.description ?? t.payFailed));
     rzp.open();
   }
 
   return (
     <div className="mt-4">
       <button type="button" onClick={pay} disabled={busy} className="btn-primary px-6">
-        {busy ? "Confirming payment..." : `Pay ₹${amount.toLocaleString("en-IN")}`}
+        {busy ? t.confirming : fmt(t.pay, { amount: `₹${amount.toLocaleString("en-IN")}` })}
       </button>
       {error ? <p className="mt-2 text-sm text-danger" role="alert">{error}</p> : null}
     </div>
   );
 }
 
-const REASONS = ["My plans changed", "Booked by mistake", "Found another service provider", "Price is too high", "Other"];
 
 export function BookingActions({ code, slotDays, paid }: { code: string; slotDays: SlotDayData[]; paid: boolean }) {
+  const t = strings.booking;
   const [mode, setMode] = useState<"none" | "reschedule" | "cancel">("none");
   const [slot, setSlot] = useState("");
-  const [reason, setReason] = useState(REASONS[0]);
+  const [reason, setReason] = useState(t.reasons[0]);
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
 
@@ -87,12 +89,12 @@ export function BookingActions({ code, slotDays, paid }: { code: string; slotDay
 
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="font-bold">Change of plans?</h2>
-      <p className="mt-1 text-sm text-muted">You can reschedule or cancel for free up to 2 hours before the visit.</p>
+      <h2 className="font-bold">{t.changeTitle}</h2>
+      <p className="mt-1 text-sm text-muted">{t.changeText}</p>
       {mode === "none" ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" className="btn-outline" onClick={() => setMode("reschedule")}>Reschedule</button>
-          <button type="button" className="btn-ghost text-danger" onClick={() => setMode("cancel")}>Cancel booking</button>
+          <button type="button" className="btn-outline" onClick={() => setMode("reschedule")}>{t.reschedule}</button>
+          <button type="button" className="btn-ghost text-danger" onClick={() => setMode("cancel")}>{t.cancel}</button>
         </div>
       ) : null}
 
@@ -101,25 +103,25 @@ export function BookingActions({ code, slotDays, paid }: { code: string; slotDay
           <SlotPicker days={slotDays} value={slot} onChange={setSlot} />
           <div className="mt-4 flex gap-2">
             <button type="button" className="btn-primary" disabled={!slot || busy} onClick={() => run(() => rescheduleBooking(code, slot))}>
-              {busy ? "Saving..." : "Confirm new time"}
+              {busy ? t.saving : t.confirmTime}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => setMode("none")}>Back</button>
+            <button type="button" className="btn-ghost" onClick={() => setMode("none")}>{t.back}</button>
           </div>
         </div>
       ) : null}
 
       {mode === "cancel" ? (
         <div className="mt-4 space-y-3">
-          <label className="label" htmlFor="reason">Why are you cancelling?</label>
+          <label className="label" htmlFor="reason">{t.whyCancel}</label>
           <select id="reason" className="input" value={reason} onChange={(e) => setReason(e.target.value)}>
-            {REASONS.map((r) => <option key={r}>{r}</option>)}
+            {t.reasons.map((r) => <option key={r}>{r}</option>)}
           </select>
-          {paid ? <p className="text-sm text-muted">You paid online. The full amount will be refunded in 5 to 7 working days.</p> : null}
+          {paid ? <p className="text-sm text-muted">{t.refundNote}</p> : null}
           <div className="flex gap-2">
             <button type="button" className="btn bg-danger text-white hover:bg-red-700" disabled={busy} onClick={() => run(() => cancelBooking(code, reason))}>
-              {busy ? "Cancelling..." : "Yes, cancel booking"}
+              {busy ? t.cancelling : t.yesCancel}
             </button>
-            <button type="button" className="btn-ghost" onClick={() => setMode("none")}>Keep booking</button>
+            <button type="button" className="btn-ghost" onClick={() => setMode("none")}>{t.keep}</button>
           </div>
         </div>
       ) : null}
@@ -130,6 +132,7 @@ export function BookingActions({ code, slotDays, paid }: { code: string; slotDay
 }
 
 export function RateBooking({ code }: { code: string }) {
+  const t = strings.booking;
   const [stars, setStars] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
@@ -139,16 +142,16 @@ export function RateBooking({ code }: { code: string }) {
 
   return (
     <div>
-      <h2 className="font-bold">How was your service?</h2>
-      <p className="mt-1 text-sm text-muted">Your rating helps other customers and rewards good professionals.</p>
-      <div className="mt-3 flex gap-1" onMouseLeave={() => setHover(0)} role="radiogroup" aria-label="Rating">
+      <h2 className="font-bold">{t.rateTitle}</h2>
+      <p className="mt-1 text-sm text-muted">{t.rateText}</p>
+      <div className="mt-3 flex gap-1" onMouseLeave={() => setHover(0)} role="radiogroup" aria-label={t.ratingLabel}>
         {[1, 2, 3, 4, 5].map((n) => (
-          <button key={n} type="button" role="radio" aria-checked={stars === n} aria-label={`${n} star${n > 1 ? "s" : ""}`} onMouseEnter={() => setHover(n)} onClick={() => setStars(n)}>
+          <button key={n} type="button" role="radio" aria-checked={stars === n} aria-label={fmt(n > 1 ? t.stars : t.star, { n })} onMouseEnter={() => setHover(n)} onClick={() => setStars(n)}>
             <Star className={`size-8 ${n <= shown ? "fill-saffron text-saffron" : "text-line"}`} />
           </button>
         ))}
       </div>
-      <textarea className="input mt-3" rows={2} maxLength={500} placeholder="Tell us more (optional)" value={comment} onChange={(e) => setComment(e.target.value)} />
+      <textarea className="input mt-3" rows={2} maxLength={500} placeholder={t.tellMore} value={comment} onChange={(e) => setComment(e.target.value)} />
       <button
         type="button"
         className="btn-primary mt-3"
@@ -160,7 +163,7 @@ export function RateBooking({ code }: { code: string }) {
           })
         }
       >
-        {busy ? "Sending..." : "Submit rating"}
+        {busy ? t.sending : t.submitRating}
       </button>
       {error ? <p className="mt-2 text-sm text-danger" role="alert">{error}</p> : null}
     </div>

@@ -1,10 +1,12 @@
 "use client";
 
+import { submitKeepingValues } from "@/lib/forms";
 import { useActionState, useState } from "react";
 import { Banknote, CalendarClock, CreditCard, MapPin, Plus, User } from "lucide-react";
 import { placeOrder, type CheckoutState } from "@/app/actions/checkout";
 import { AddressFields, type CityChoice } from "@/components/address-fields";
 import { SlotPicker, type SlotDayData } from "@/components/slot-picker";
+import { strings, fmt } from "@/strings";
 
 type SavedAddress = { id: string; label: string; cityId: string; text: string };
 
@@ -38,6 +40,7 @@ export function CheckoutForm({
   onlineEnabled: boolean;
 }) {
   const [state, submit, placing] = useActionState<CheckoutState, FormData>(placeOrder, {});
+  const t = strings.checkout;
   const [addressId, setAddressId] = useState(addresses[0]?.id ?? "new");
   const [newCityId, setNewCityId] = useState("");
   const [slot, setSlot] = useState("");
@@ -49,11 +52,11 @@ export function CheckoutForm({
   }
 
   /** Without a time slot, point the customer at the slot picker instead of sending the form. */
-  function checkSlot(e: React.FormEvent<HTMLFormElement>) {
-    if (slot) return;
-    e.preventDefault();
+  function checkSlot(): boolean {
+    if (slot) return true;
     setSlotMissing(true);
     document.getElementById("step-3")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return false;
   }
   const [payment, setPayment] = useState(onlineEnabled ? "ONLINE" : "PAY_AFTER_SERVICE");
 
@@ -62,21 +65,21 @@ export function CheckoutForm({
   const amount = `₹${total.toLocaleString("en-IN")}`;
 
   return (
-    <form action={submit} onSubmit={checkSlot} className="min-w-0 space-y-5">
-      <Step n={1} icon={User} title="Contact">
+    <form onSubmit={submitKeepingValues(submit, checkSlot)} className="min-w-0 space-y-5">
+      <Step n={1} icon={User} title={t.contact}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label" htmlFor="name">Your name</label>
+            <label className="label" htmlFor="name">{t.yourName}</label>
             <input id="name" name="name" className="input" defaultValue={name} autoComplete="name" required minLength={2} />
           </div>
           <div>
-            <span className="label">Mobile number</span>
+            <span className="label">{t.mobile}</span>
             <p className="input bg-surface text-muted">+91 {phone}</p>
           </div>
         </div>
       </Step>
 
-      <Step n={2} icon={MapPin} title="Address">
+      <Step n={2} icon={MapPin} title={t.address}>
         <input type="hidden" name="addressId" value={addressId} />
         {addresses.length ? (
           <div className="space-y-2">
@@ -97,7 +100,7 @@ export function CheckoutForm({
             ))}
             <label className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 ${addressId === "new" ? "border-brand-700 bg-brand-50/60" : "border-line"}`}>
               <input type="radio" name="addressChoice" className="accent-brand-700" checked={addressId === "new"} onChange={() => { setAddressId("new"); setSlot(""); }} />
-              <span className="flex items-center gap-1.5 text-sm font-semibold"><Plus className="size-4" aria-hidden="true" /> Add a new address</span>
+              <span className="flex items-center gap-1.5 text-sm font-semibold"><Plus className="size-4" aria-hidden="true" /> {t.newAddress}</span>
             </label>
           </div>
         ) : null}
@@ -108,24 +111,24 @@ export function CheckoutForm({
         ) : null}
       </Step>
 
-      <Step n={3} icon={CalendarClock} title="Date and time">
+      <Step n={3} icon={CalendarClock} title={t.dateTime}>
         {slotMissing ? (
           <p className="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-danger" role="alert">
-            {cityId ? "Pick a time for the visit: tap one of the times below." : "Choose your city above, then pick a time for the visit."}
+            {cityId ? t.pickTime : t.pickCityFirst}
           </p>
         ) : null}
         {cityId ? (
           <SlotPicker key={cityId} days={days} value={slot} onChange={pickSlot} />
         ) : (
-          <p className="text-sm text-muted">Choose your city above to see open time slots.</p>
+          <p className="text-sm text-muted">{t.chooseCity}</p>
         )}
         <div className="mt-4">
-          <label className="label" htmlFor="notes">Notes for the professional <span className="font-normal text-muted">(optional)</span></label>
-          <textarea id="notes" name="notes" rows={2} maxLength={500} className="input" placeholder="Gate code, parking, pets at home, or anything else they should know" />
+          <label className="label" htmlFor="notes">{t.notes} <span className="font-normal text-muted">{t.optional}</span></label>
+          <textarea id="notes" name="notes" rows={2} maxLength={500} className="input" placeholder={t.notesPlaceholder} />
         </div>
       </Step>
 
-      <Step n={4} icon={CreditCard} title="Payment">
+      <Step n={4} icon={CreditCard} title={t.payment}>
         <input type="hidden" name="payment" value={payment} />
         <div className="grid gap-2 sm:grid-cols-2">
           {onlineEnabled ? (
@@ -136,7 +139,7 @@ export function CheckoutForm({
               className={`flex items-start gap-3 rounded-xl border p-3.5 text-left ${payment === "ONLINE" ? "border-brand-700 bg-brand-50/60" : "border-line"}`}
             >
               <CreditCard className="mt-0.5 size-5 text-brand-700" aria-hidden="true" />
-              <span className="text-sm"><span className="font-semibold">Pay online now</span><span className="block text-muted">UPI, cards, net banking or wallets</span></span>
+              <span className="text-sm"><span className="font-semibold">{t.payOnline}</span><span className="block text-muted">{t.payOnlineText}</span></span>
             </button>
           ) : null}
           <button
@@ -146,7 +149,7 @@ export function CheckoutForm({
             className={`flex items-start gap-3 rounded-xl border p-3.5 text-left ${payment === "PAY_AFTER_SERVICE" ? "border-brand-700 bg-brand-50/60" : "border-line"}`}
           >
             <Banknote className="mt-0.5 size-5 text-brand-700" aria-hidden="true" />
-            <span className="text-sm"><span className="font-semibold">Pay after service</span><span className="block text-muted">UPI or cash to the professional</span></span>
+            <span className="text-sm"><span className="font-semibold">{t.payAfter}</span><span className="block text-muted">{t.payAfterText}</span></span>
           </button>
         </div>
       </Step>
@@ -154,9 +157,9 @@ export function CheckoutForm({
       {state.error ? <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-danger" role="alert">{state.error}</p> : null}
 
       <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted">Free reschedule or cancellation up to 2 hours before the visit.</p>
+        <p className="text-xs text-muted">{t.freeChange}</p>
         <button className="btn-primary px-8 py-3 text-base" disabled={placing}>
-          {placing ? "Booking..." : payment === "ONLINE" ? `Continue to pay ${amount}` : `Confirm booking · ${amount}`}
+          {placing ? t.booking : fmt(payment === "ONLINE" ? t.continuePay : t.confirm, { amount })}
         </button>
       </div>
     </form>

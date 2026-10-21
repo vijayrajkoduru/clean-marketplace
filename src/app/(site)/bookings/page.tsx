@@ -8,12 +8,15 @@ import { OPEN_STATUSES } from "@/lib/booking";
 import { expireStalePayments } from "@/lib/maintenance";
 import { formatDateTime, rupees } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
+import { strings, fmt, type Strings } from "@/strings";
 
-export const metadata: Metadata = { title: "My bookings", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: strings.bookings.metaTitle, robots: { index: false } };
+}
 
 type Row = { code: string; status: string; scheduledAt: Date; total: number; items: { serviceName: string; variantName: string; quantity: number }[] };
 
-function BookingRow({ b }: { b: Row }) {
+function BookingRow({ b, d }: { b: Row; d: Strings }) {
   const first = b.items[0];
   const more = b.items.length - 1;
   return (
@@ -25,7 +28,7 @@ function BookingRow({ b }: { b: Row }) {
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">
             {first?.serviceName}
-            {more > 0 ? <span className="font-normal text-muted"> + {more} more</span> : null}
+            {more > 0 ? <span className="font-normal text-muted"> {fmt(d.bookings.more, { n: more })}</span> : null}
           </p>
           <p className="mt-0.5 text-sm text-muted">{formatDateTime(b.scheduledAt)} · {rupees(b.total)} · #{b.code}</p>
         </div>
@@ -39,19 +42,28 @@ function BookingRow({ b }: { b: Row }) {
 
 async function BookingsList() {
   const user = await requireUser("/bookings");
+  const d = strings;
   await expireStalePayments();
-  const bookings = await db.booking.findMany({
+  const rows = await db.booking.findMany({
     where: { customerId: user.id },
     orderBy: { scheduledAt: "desc" },
     take: 100,
-    select: { code: true, status: true, scheduledAt: true, total: true, items: { select: { serviceName: true, variantName: true, quantity: true } } },
+    select: {
+      code: true,
+      status: true,
+      scheduledAt: true,
+      total: true,
+      items: { select: { serviceName: true, variantName: true, quantity: true } },
+    },
   });
+  const bookings = rows.map((b) => ({ ...b, items: b.items.map((i) => i) }));
+  const t = d.bookings;
   if (!bookings.length) {
     return (
       <div className="card mt-6 p-10 text-center">
-        <h2 className="text-lg font-bold">No bookings yet</h2>
-        <p className="mt-2 text-sm text-muted">When you book a service, you can track it here.</p>
-        <Link href="/services" className="btn-primary mt-6">Book a service</Link>
+        <h2 className="text-lg font-bold">{t.none}</h2>
+        <p className="mt-2 text-sm text-muted">{t.noneText}</p>
+        <Link href="/services" className="btn-primary mt-6">{t.book}</Link>
       </div>
     );
   }
@@ -62,17 +74,17 @@ async function BookingsList() {
     <div className="mt-6 space-y-8">
       {upcoming.length ? (
         <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Upcoming</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">{t.upcoming}</h2>
           <ul className="mt-3 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
-            {upcoming.map((b) => <BookingRow key={b.code} b={b} />)}
+            {upcoming.map((b) => <BookingRow key={b.code} b={b} d={d} />)}
           </ul>
         </section>
       ) : null}
       {past.length ? (
         <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Past</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">{t.past}</h2>
           <ul className="mt-3 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
-            {past.map((b) => <BookingRow key={b.code} b={b} />)}
+            {past.map((b) => <BookingRow key={b.code} b={b} d={d} />)}
           </ul>
         </section>
       ) : null}
@@ -80,10 +92,11 @@ async function BookingsList() {
   );
 }
 
-export default function BookingsPage() {
+export default async function BookingsPage() {
+  const d = strings;
   return (
     <div className="container-page max-w-4xl py-8 sm:py-10">
-      <h1 className="text-2xl font-bold sm:text-3xl">My bookings</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">{d.bookings.title}</h1>
       <Suspense fallback={<div className="mt-6 h-64 animate-pulse rounded-2xl bg-surface" />}>
         <BookingsList />
       </Suspense>

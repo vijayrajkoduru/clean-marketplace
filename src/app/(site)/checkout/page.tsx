@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { COUPON_COOKIE, getCartLines } from "@/lib/cart";
 import { computeTotals } from "@/lib/pricing";
+import { cartExtras } from "@/lib/cart-extras";
 import { getCities } from "@/lib/catalog";
 import { getSlotDays } from "@/lib/slots";
 import { razorpayEnabled } from "@/lib/razorpay";
@@ -14,22 +15,27 @@ import { expireStalePayments } from "@/lib/maintenance";
 import { formatDuration, rupees } from "@/lib/format";
 import { BillSummary } from "@/components/bill-summary";
 import { CheckoutForm } from "./checkout-form";
+import { fmt, strings } from "@/strings";
 
-export const metadata: Metadata = { title: "Checkout", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: strings.checkout.metaTitle, robots: { index: false } };
+}
 
 async function CheckoutView() {
   const user = await requireUser("/checkout");
+  const d = strings;
   const lines = await getCartLines();
   if (!lines.length) redirect("/cart");
 
   const couponCode = (await cookies()).get(COUPON_COOKIE)?.value ?? null;
+  const extras = await cartExtras(user.id);
   const [totals, addresses, cities, profile] = await Promise.all([
-    computeTotals(lines, couponCode),
+    computeTotals(lines, couponCode, extras),
     db.address.findMany({ where: { userId: user.id, city: { active: true } }, include: { city: true }, orderBy: { createdAt: "desc" } }),
     getCities(),
     db.user.findUnique({ where: { id: user.id }, select: { name: true } }),
   ]);
-  if (totals.subtotal < site.minOrder) redirect("/cart");
+  if (totals.subtotal < site.minOrder || lines.some((l) => l.problem)) redirect("/cart");
 
   await expireStalePayments();
   const now = new Date();
@@ -54,13 +60,16 @@ async function CheckoutView() {
       />
       <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <div className="card p-5">
-          <h2 className="font-semibold">Booking summary</h2>
+          <h2 className="font-semibold">{d.checkout.summary}</h2>
           <ul className="mt-3 space-y-3 text-sm">
             {lines.map((l) => (
               <li key={l.variantId} className="flex justify-between gap-3">
                 <span>
                   <span className="font-medium">{l.serviceName}</span>
-                  <span className="block text-xs text-muted">{l.variantName} · {formatDuration(l.durationMins)}{l.quantity > 1 ? ` · x${l.quantity}` : ""}</span>
+                  <span className="block text-xs text-muted">
+                    {l.variantName} · {l.guests ? fmt(d.menu.lineGuests, { n: l.guests, price: rupees(l.platePrice ?? 0) }) : formatDuration(l.durationMins)}
+                    {l.quantity > 1 ? ` · x${l.quantity}` : ""}
+                  </span>
                 </span>
                 <span className="shrink-0 font-medium">{rupees(l.lineTotal)}</span>
               </li>
@@ -75,10 +84,11 @@ async function CheckoutView() {
   );
 }
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+  const d = strings;
   return (
     <div className="container-page py-8 sm:py-10">
-      <h1 className="text-2xl font-bold sm:text-3xl">Checkout</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">{d.checkout.title}</h1>
       <Suspense fallback={<div className="mt-6 h-96 animate-pulse rounded-2xl bg-surface" />}>
         <CheckoutView />
       </Suspense>

@@ -1,7 +1,8 @@
 /**
  * Seeds cities, the service catalogue and starter coupons.
- * Safe to run more than once: existing rows are updated, not duplicated,
- * and price options are only created for services that are new.
+ * Safe to run more than once, also on a live database: only categories and services that are
+ * new are added. Existing ones keep the names, prices and photos set in the admin panel;
+ * a missing service photo is filled in.
  * Run with: npm run db:seed
  */
 import { existsSync } from "node:fs";
@@ -738,12 +739,279 @@ const catalog: C[] = [
       },
     ],
   },
+  {
+    slug: "parties-events",
+    name: "Parties and events",
+    tagline: "Celebrations planned, decorated and served",
+    description:
+      "Catering, decoration, photography, entertainment and full planning for birthdays, weddings, functions and corporate events.",
+    icon: "party-popper",
+    faqs: [
+      {
+        q: "How early should I book?",
+        a: "Book at least 3 days ahead for catering, decoration and planning, and 2 weeks ahead for weddings. Our event team calls you after booking to confirm the menu, theme and venue details.",
+      },
+      {
+        q: "Can I change the menu or the decoration theme?",
+        a: "Yes. The price shown is for the standard package. The event team shares options on the call, and any changes are priced and agreed before the event.",
+      },
+      {
+        q: "Do you work at my venue?",
+        a: "Yes. We work at homes, apartment clubhouses, function halls and offices in the city. Hall rent is not included.",
+      },
+      rescheduleFaq,
+    ],
+    services: [
+      {
+        slug: "catering-services",
+        name: "Catering",
+        summary: "Fresh buffet menus with chefs and serving staff.",
+        description:
+          "Freshly cooked veg and non-veg buffets for parties and functions, set up at your venue with chafing dishes, serving staff and cleanup.",
+        includes: ["Your choice of dishes from our menu", "Cooking, buffet setup and serving staff", "Plates, cutlery and chafing dishes", "Cleanup after the meal"],
+        excludes: ["Venue and hall rent", "Live counters (priced on the call)"],
+        // Priced per plate with a menu: the packages are created from cateringMenu below.
+        variants: [],
+        featured: true,
+      },
+      {
+        slug: "event-decor",
+        name: "Event decoration",
+        summary: "Balloon, floral and theme decor for any occasion.",
+        description: "Balloon, floral and themed decoration for birthdays, house parties, functions and stage events, set up and removed by our team.",
+        includes: ["Theme planning call", "Setup before the event", "Removal after the event"],
+        excludes: ["Venue and hall rent", "Custom printed banners (priced on the call)"],
+        variants: [
+          ["Birthday balloon decor at home", 2499, 2999, 120],
+          ["Theme decor with backdrop and lights", 6999, 8499, 180],
+          ["Floral stage decor for functions", 14999, 17999, 300],
+        ],
+        featured: true,
+      },
+      {
+        slug: "event-photography",
+        name: "Photography and video",
+        summary: "Candid photos and video of your event.",
+        description: "Professional photographers and videographers for birthdays, functions and weddings, with edited photos delivered online.",
+        includes: ["Photographer with professional camera", "Edited photos shared online within 7 days"],
+        excludes: ["Printed albums (priced on the call)", "Drone shots"],
+        variants: [
+          ["Party photography, 3 hours", 4999, 5999, 180],
+          ["Photo and video, 6 hours", 14999, 17999, 360],
+          ["Pre-wedding shoot, half day", 19999, 24999, 300],
+        ],
+      },
+      {
+        slug: "wedding-planning",
+        name: "Wedding planning",
+        summary: "Venue, decor, catering and vendors planned for you.",
+        description:
+          "From venue selection to decor, catering and photography, our planners coordinate every vendor so the family can enjoy the day.",
+        includes: ["Planning meeting and budget plan", "Vendor coordination", "A coordinator on the day"],
+        excludes: ["Venue, catering and decor costs (quoted in the plan)"],
+        variants: [
+          ["Wedding planning consultation", 999, null, 60],
+          ["Engagement or reception coordination", 24999, 29999, 480],
+          ["Wedding day coordination", 49999, 59999, 600],
+        ],
+      },
+      {
+        slug: "event-planning-management",
+        name: "Event planning and management",
+        summary: "Birthdays, parties and corporate events, run end to end.",
+        description: "One team plans and runs your event: schedule, vendors, setup, guests and cleanup, for parties at home and corporate events.",
+        includes: ["Planning call and event schedule", "Vendor booking and coordination", "Event manager on the day"],
+        excludes: ["Food, decor and venue costs (quoted in the plan)"],
+        variants: [
+          ["Event planning consultation", 499, null, 45],
+          ["Birthday party management, up to 50 guests", 9999, 11999, 300],
+          ["Corporate event management, half day", 24999, 29999, 300],
+        ],
+      },
+      {
+        slug: "entertainment",
+        name: "Entertainment",
+        summary: "DJs, magicians, anchors and kids' party hosts.",
+        description: "Performers and hosts who keep guests of every age entertained: DJs with sound and lights, magicians, anchors and party game hosts.",
+        includes: ["Performer and their equipment", "Sound check before the event"],
+        excludes: ["Stage and venue power backup"],
+        variants: [
+          ["Kids party host with games, 2 hours", 3499, 3999, 120],
+          ["Magic show, 1 hour", 4999, 5999, 60],
+          ["Anchor or emcee, 3 hours", 5999, 6999, 180],
+          ["DJ with sound and lights, 3 hours", 8999, 10999, 180],
+        ],
+      },
+    ],
+  },
+  {
+    slug: "home-maintenance",
+    name: "Home maintenance",
+    tagline: "Small jobs and regular care, sorted",
+    description: "A handyman for the small jobs around the house, and a full home check-up that finds problems before they get expensive.",
+    icon: "drill",
+    faqs: [visitFaq, rescheduleFaq],
+    services: [
+      {
+        slug: "handyman-visit",
+        name: "Handyman for small jobs",
+        summary: "A list of small fixes done in one visit.",
+        description: "One skilled handyman for the small jobs that pile up: loose hinges, wall hooks, drilling, minor fittings and adjustments.",
+        includes: ["Skilled handyman with tools", "Small fittings and adjustments"],
+        excludes: ["Spare parts and hardware", "Electrical or plumbing work that needs a licensed professional"],
+        variants: [
+          ["Up to 1 hour of small jobs", 349, 449, 60],
+          ["Up to 3 hours of small jobs", 899, 1099, 180],
+        ],
+      },
+      {
+        slug: "home-maintenance-checkup",
+        name: "Home maintenance check-up",
+        summary: "Wiring, plumbing, walls and fittings checked, with a report.",
+        description:
+          "A technician checks wiring, switches, taps, drains, leaks, doors and walls, and gives you a written report with what needs fixing and the cost.",
+        includes: ["Electrical and plumbing check", "Seepage and wall check", "Written report with costs"],
+        excludes: ["Repairs (booked separately at the report price)"],
+        variants: [
+          ["Full home check-up, 2 BHK", 999, 1299, 120],
+          ["Full home check-up, 3 BHK", 1299, 1599, 150],
+        ],
+      },
+    ],
+  },
 ];
 
 const coupons = [
   { code: "WELCOME100", description: "₹100 off your first booking above ₹999", type: "FLAT", value: 100, minOrder: 999, maxDiscount: null },
   { code: "CLEAN10", description: "10% off cleaning orders above ₹1,499, up to ₹300", type: "PERCENT", value: 10, minOrder: 1499, maxDiscount: 300 },
 ];
+
+/* ---------------- Catering menu ---------------- */
+
+/** [name, vegetarian, extra per plate for a premium dish] */
+type Dish = [name: string, veg: boolean, extra?: number];
+type Course = { key: string; name: string; fixed?: boolean; dishes: Dish[] };
+/** Per course: [dishes in the plate price, fewest to pick, most to pick, extra per plate for each dish beyond the included ones] */
+type Rule = [included: number, min: number, max: number, extra: number];
+type Package = { name: string; price: number; mrp: number; mins: number; minGuests: number; maxGuests: number; rules: Record<string, Rule> };
+
+const cateringMenu: { service: string; courses: Course[]; packages: Package[] } = {
+  service: "catering-services",
+  courses: [
+    { key: "drinks", name: "Welcome drinks", dishes: [["Fresh lime soda", true], ["Rose milk", true], ["Buttermilk (majjiga)", true], ["Mango lassi", true], ["Badam milk", true], ["Watermelon juice", true]] },
+    { key: "vstart", name: "Veg starters", dishes: [["Paneer tikka", true], ["Veg manchurian", true], ["Chilli baby corn", true], ["Hara bhara kebab", true], ["Corn cheese balls", true], ["Gobi 65", true], ["Mirchi bajji", true]] },
+    { key: "nvstart", name: "Non-veg starters", dishes: [["Chicken 65", false], ["Chicken tikka", false], ["Apollo fish", false], ["Pepper chicken", false], ["Tandoori chicken", false, 40], ["Mutton seekh kebab", false, 60]] },
+    {
+      key: "vcurry",
+      name: "Veg curries",
+      dishes: [
+        ["Paneer butter masala", true],
+        ["Kadai paneer", true],
+        ["Palak paneer", true],
+        ["Malai kofta", true],
+        ["Mirchi ka salan", true],
+        ["Bagara baingan", true],
+        ["Gutti vankaya curry", true],
+        ["Mixed veg kurma", true],
+        ["Chana masala", true],
+        ["Aloo gobi masala", true],
+      ],
+    },
+    {
+      key: "nvcurry",
+      name: "Non-veg curries",
+      dishes: [["Andhra chicken curry", false], ["Butter chicken", false], ["Chicken korma", false], ["Gongura chicken", false], ["Egg masala curry", false], ["Fish curry", false, 40], ["Mutton curry", false, 80], ["Gongura mutton", false, 80]],
+    },
+    { key: "nvbiryani", name: "Non-veg biryani", dishes: [["Hyderabadi chicken dum biryani", false], ["Chicken fry piece biryani", false], ["Mutton dum biryani", false, 90]] },
+    { key: "rice", name: "Rice and veg biryani", dishes: [["Veg dum biryani", true], ["Bagara rice", true], ["Jeera rice", true], ["Veg pulao", true], ["Pulihora (tamarind rice)", true], ["Lemon rice", true]] },
+    { key: "dal", name: "Dal, sambar and rasam", dishes: [["Sambar", true], ["Tomato pappu", true], ["Dal tadka", true], ["Dal makhani", true], ["Palakura pappu", true], ["Rasam", true]] },
+    { key: "fry", name: "Fry and poriyal", dishes: [["Aloo fry", true], ["Bhindi fry", true], ["Dondakaya fry", true], ["Cabbage poriyal", true], ["Beans poriyal", true]] },
+    { key: "breads", name: "Breads", dishes: [["Butter naan", true], ["Tandoori roti", true], ["Rumali roti", true], ["Poori", true], ["Chapati", true]] },
+    { key: "sweets", name: "Sweets", dishes: [["Double ka meetha", true], ["Gulab jamun", true], ["Gajar ka halwa", true], ["Semiya payasam", true], ["Bobbatlu", true], ["Rasmalai", true, 25], ["Qubani ka meetha", true, 30]] },
+    { key: "served", name: "Always served", fixed: true, dishes: [["White rice", true], ["Curd rice", true], ["Curd", true], ["Green salad", true], ["Papad", true], ["Pickle", true], ["Mineral water", true]] },
+  ],
+  packages: [
+    {
+      name: "Veg Classic",
+      price: 349,
+      mrp: 399,
+      mins: 360,
+      minGuests: 50,
+      maxGuests: 2000,
+      rules: { drinks: [1, 1, 2, 20], vstart: [1, 1, 3, 30], vcurry: [2, 2, 4, 30], rice: [1, 1, 2, 25], dal: [1, 1, 2, 15], fry: [1, 1, 2, 15], breads: [1, 1, 2, 15], sweets: [1, 1, 3, 25] },
+    },
+    {
+      name: "Veg Premium",
+      price: 499,
+      mrp: 579,
+      mins: 360,
+      minGuests: 50,
+      maxGuests: 2000,
+      rules: { drinks: [1, 1, 2, 20], vstart: [2, 2, 4, 30], vcurry: [3, 3, 5, 30], rice: [2, 2, 3, 25], dal: [1, 1, 2, 15], fry: [1, 1, 2, 15], breads: [2, 1, 3, 15], sweets: [2, 2, 4, 25] },
+    },
+    {
+      name: "Veg and non-veg",
+      price: 649,
+      mrp: 749,
+      mins: 360,
+      minGuests: 50,
+      maxGuests: 2000,
+      rules: {
+        drinks: [1, 1, 2, 20],
+        vstart: [1, 1, 3, 30],
+        nvstart: [1, 1, 3, 50],
+        vcurry: [2, 2, 4, 30],
+        nvcurry: [2, 2, 4, 50],
+        nvbiryani: [1, 1, 2, 60],
+        rice: [1, 0, 2, 25],
+        dal: [1, 1, 2, 15],
+        breads: [1, 1, 2, 15],
+        sweets: [2, 2, 4, 25],
+      },
+    },
+  ],
+};
+
+/**
+ * Gives catering its per-plate packages and menu, once: only when the service has no menu yet.
+ * Older fixed-size buffet options are switched off (bookings that used them keep them).
+ */
+async function seedCateringMenu() {
+  const svc = await db.service.findUnique({ where: { slug: cateringMenu.service }, include: { menuCourses: { select: { id: true } } } });
+  if (!svc || svc.menuCourses.length) return;
+  await db.serviceVariant.updateMany({ where: { serviceId: svc.id, unit: "job" }, data: { active: false } });
+  const courseIds = new Map<string, string>();
+  for (const [ci, c] of cateringMenu.courses.entries()) {
+    const course = await db.menuCourse.create({
+      data: {
+        serviceId: svc.id,
+        name: c.name,
+        fixed: Boolean(c.fixed),
+        sortOrder: ci,
+        dishes: { create: c.dishes.map(([name, veg, extra], di) => ({ name, veg, extraPrice: extra ?? 0, sortOrder: di })) },
+      },
+    });
+    courseIds.set(c.key, course.id);
+  }
+  for (const [pi, p] of cateringMenu.packages.entries()) {
+    await db.serviceVariant.create({
+      data: {
+        serviceId: svc.id,
+        name: p.name,
+        price: p.price,
+        mrp: p.mrp,
+        durationMins: p.mins,
+        unit: "plate",
+        minGuests: p.minGuests,
+        maxGuests: p.maxGuests,
+        sortOrder: pi,
+        menuRules: {
+          create: Object.entries(p.rules).map(([key, [included, minPick, maxPick, extraPrice]]) => ({ courseId: courseIds.get(key)!, included, minPick, maxPick, extraPrice })),
+        },
+      },
+    });
+  }
+}
 
 async function main() {
   for (const c of cities) {
@@ -753,7 +1021,7 @@ async function main() {
   for (const [ci, cat] of catalog.entries()) {
     const category = await db.category.upsert({
       where: { slug: cat.slug },
-      update: { name: cat.name, tagline: cat.tagline, description: cat.description, icon: cat.icon, sortOrder: ci },
+      update: {},
       create: {
         slug: cat.slug,
         name: cat.name,
@@ -778,8 +1046,8 @@ async function main() {
       const image = s.image ?? serviceImage(s.slug);
       const existing = await db.service.findUnique({ where: { slug: s.slug } });
       if (existing) {
-        // Fill in a photo only where none is set, so images chosen in the admin panel stay.
-        await db.service.update({ where: { id: existing.id }, data: { ...fields, ...(existing.image ? {} : { image }) } });
+        // Leave admin edits alone; only fill in a photo where none is set.
+        if (!existing.image && image) await db.service.update({ where: { id: existing.id }, data: { image } });
         continue;
       }
       await db.service.create({
@@ -805,6 +1073,8 @@ async function main() {
   for (const c of coupons) {
     await db.coupon.upsert({ where: { code: c.code }, update: {}, create: c });
   }
+
+  await seedCateringMenu();
 
   const counts = await Promise.all([db.city.count(), db.category.count(), db.service.count(), db.serviceVariant.count()]);
   console.log(`Seeded ${counts[0]} cities, ${counts[1]} categories, ${counts[2]} services, ${counts[3]} price options.`);

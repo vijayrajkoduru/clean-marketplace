@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { strings } from "@/strings";
 
 export type SlotDayData = { key: string; weekday: string; day: string; slots: { iso: string; label: string; available: boolean }[] };
 
 /** Day tabs and time buttons. The chosen slot is submitted as the hidden "slot" field. */
 export function SlotPicker({ days, name = "slot", value, onChange }: { days: SlotDayData[]; name?: string; value?: string; onChange?: (iso: string) => void }) {
+  const text = strings.slots;
   const firstOpen = days.find((d) => d.slots.some((s) => s.available))?.key ?? days[0]?.key;
   const [dayKey, setDayKey] = useState(firstOpen);
   const [own, setOwn] = useState(value ?? "");
@@ -13,7 +15,7 @@ export function SlotPicker({ days, name = "slot", value, onChange }: { days: Slo
   const setPicked = onChange ? () => {} : setOwn;
   const day = days.find((d) => d.key === dayKey) ?? days[0];
 
-  if (!days.length) return <p className="text-sm text-muted">No slots are open right now. Please check again later today.</p>;
+  if (!days.length) return <p className="text-sm text-muted">{text.none}</p>;
 
   function choose(iso: string) {
     setPicked(iso);
@@ -23,7 +25,7 @@ export function SlotPicker({ days, name = "slot", value, onChange }: { days: Slo
   return (
     <div>
       <input type="hidden" name={name} value={picked} />
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2" role="tablist" aria-label="Choose a day">
+      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2" role="tablist" aria-label={text.chooseDay}>
         {days.map((d) => {
           const open = d.slots.some((s) => s.available);
           const active = d.key === day?.key;

@@ -1,10 +1,12 @@
 import {
   AirVent,
   Bug,
+  Drill,
   Droplets,
   Flower2,
   Hammer,
   PaintRoller,
+  PartyPopper,
   Scissors,
   Sparkles,
   Wrench,
@@ -22,6 +24,8 @@ const ICONS: Record<string, LucideIcon> = {
   flower: Flower2,
   scissors: Scissors,
   "paint-roller": PaintRoller,
+  "party-popper": PartyPopper,
+  drill: Drill,
 };
 
 export function CategoryIcon({ name, className }: { name: string; className?: string }) {

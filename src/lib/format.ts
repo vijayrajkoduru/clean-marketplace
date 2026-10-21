@@ -45,3 +45,14 @@ export function parseList<T = string>(json: string | null | undefined): T[] {
     return [];
   }
 }
+
+/** "Haircut (Classic cut, Beard trim x2), Facial (Gold)": each service once, with the options booked. */
+export function serviceSummary(items: { serviceName: string; variantName: string; quantity: number }[]): string {
+  const groups = new Map<string, string[]>();
+  for (const i of items) {
+    const options = groups.get(i.serviceName) ?? [];
+    options.push(i.quantity > 1 ? `${i.variantName} x${i.quantity}` : i.variantName);
+    groups.set(i.serviceName, options);
+  }
+  return [...groups].map(([name, options]) => `${name} (${options.join(", ")})`).join(", ");
+}

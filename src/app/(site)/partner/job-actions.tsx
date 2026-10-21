@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { acceptJob, completeJob, markOnTheWay, startJob } from "@/app/actions/partner";
+import { strings } from "@/strings";
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -19,11 +20,12 @@ function useAction() {
 }
 
 export function AcceptJob({ code }: { code: string }) {
+  const t = strings.partner;
   const { error, busy, run } = useAction();
   return (
     <div>
       <button type="button" className="btn-primary w-full" disabled={busy} onClick={() => run(() => acceptJob(code))}>
-        {busy ? "Accepting..." : "Accept job"}
+        {busy ? t.accepting : t.accept}
       </button>
       {error ? <p className="mt-2 text-sm text-danger" role="alert">{error}</p> : null}
     </div>
@@ -31,6 +33,7 @@ export function AcceptJob({ code }: { code: string }) {
 }
 
 export function JobActions({ code, status }: { code: string; status: string }) {
+  const t = strings.partner;
   const { error, busy, run } = useAction();
   const [startCode, setStartCode] = useState("");
 
@@ -38,12 +41,12 @@ export function JobActions({ code, status }: { code: string; status: string }) {
     <div className="mt-4 border-t border-line pt-4">
       <div className="flex flex-wrap items-end gap-2">
         {status === "ASSIGNED" ? (
-          <button type="button" className="btn-outline" disabled={busy} onClick={() => run(() => markOnTheWay(code))}>I am on my way</button>
+          <button type="button" className="btn-outline" disabled={busy} onClick={() => run(() => markOnTheWay(code))}>{t.onMyWay}</button>
         ) : null}
         {status === "ASSIGNED" || status === "ON_THE_WAY" ? (
           <>
             <div>
-              <label htmlFor={`sc-${code}`} className="label">Customer start code</label>
+              <label htmlFor={`sc-${code}`} className="label">{t.startCode}</label>
               <input
                 id={`sc-${code}`}
                 inputMode="numeric"
@@ -54,7 +57,7 @@ export function JobActions({ code, status }: { code: string; status: string }) {
               />
             </div>
             <button type="button" className="btn-primary" disabled={busy || startCode.length !== 4} onClick={() => run(() => startJob(code, startCode))}>
-              Start job
+              {t.start}
             </button>
           </>
         ) : null}
@@ -64,10 +67,10 @@ export function JobActions({ code, status }: { code: string; status: string }) {
             className="btn-primary"
             disabled={busy}
             onClick={() => {
-              if (confirm("Mark this job as complete? Collect payment first if the customer chose pay after service.")) run(() => completeJob(code));
+              if (confirm(t.completeConfirm)) run(() => completeJob(code));
             }}
           >
-            Mark job complete
+            {t.complete}
           </button>
         ) : null}
       </div>

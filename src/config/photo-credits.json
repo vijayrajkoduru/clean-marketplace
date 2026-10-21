@@ -72,30 +72,6 @@
     "source": "https://commons.wikimedia.org/wiki/File:0086_wall_painting.jpg"
   },
   {
-    "file": "/img/hero-1.jpg",
-    "title": "Grace Shrock-Hurst mops floor Our Community Place in Harrisonburg VA May 2008",
-    "author": "Artaxerxes",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Grace_Shrock-Hurst_mops_floor_Our_Community_Place_in_Harrisonburg_VA_May_2008.jpg"
-  },
-  {
-    "file": "/img/hero-2.jpg",
-    "title": "Electrician at work, Goa, India",
-    "author": "Fredericknoronha",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Electrician_at_work,_Goa,_India.jpg"
-  },
-  {
-    "file": "/img/hero-3.jpg",
-    "title": "Barber shop",
-    "author": "Tshrinivasan",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Barber_shop.jpeg"
-  },
-  {
     "file": "/img/partner.jpg",
     "title": "Electrician at work, Goa, India. 3",
     "author": "Fredericknoronha",
@@ -446,5 +422,541 @@
     "license": "CC BY-SA 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Rolling_in_the_Middle_(34571931105)_(cropped).jpg"
+  },
+  {
+    "file": "/img/banner/events.jpg",
+    "title": "Lights converging to the top of a pole in a Indian wedding function.",
+    "author": "Meher Bala",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+    "source": "https://wordpress.org/photos/photo/68165be12b/"
+  },
+  {
+    "file": "/img/cat/home-maintenance.jpg",
+    "title": "Hand-tool set with bits and accessories arranged on a white surface.",
+    "author": "Wilfredor",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hand-tool_set_with_bits_and_accessories_arranged_on_a_white_surface..jpg"
+  },
+  {
+    "file": "/img/cat/parties-events.jpg",
+    "title": "Wedding reception stage, decorations, Kochi",
+    "author": "Vis M",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wedding_reception_stage,_decorations,_Kochi.jpg"
+  },
+  {
+    "file": "/img/hero/cleaner-mopping.jpg",
+    "title": "บริการแม่บ้านทำความสะอาด แบบประจำ",
+    "author": "Arayabee",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%E0%B8%9A%E0%B8%A3%E0%B8%B4%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B8%94_%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B3.jpg"
+  },
+  {
+    "file": "/img/hero/electrician-panel.jpg",
+    "title": "Electrician at work.",
+    "author": "gktelectrical",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://www.flickr.com/photos/134754014@N06/19488685360"
+  },
+  {
+    "file": "/img/hero/wedding-mandap.jpg",
+    "title": "Wedding Stage",
+    "author": "Kasyap",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wedding_Stage.jpg"
+  },
+  {
+    "file": "/img/hero/makeup-artist.jpg",
+    "title": "Bridal Pampering",
+    "author": "Ashley MacKinnon",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://www.flickr.com/photos/42395711@N06/10954001544"
+  },
+  {
+    "file": "/img/svc/catering-services.jpg",
+    "title": "Wedding Buffet",
+    "author": "paulhami",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source": "https://www.flickr.com/photos/8306673@N02/27980798324"
+  },
+  {
+    "file": "/img/svc/entertainment.jpg",
+    "title": "Party Night (Unsplash)",
+    "author": "Thomas Habr thomashabr",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Party_Night_(Unsplash).jpg"
+  },
+  {
+    "file": "/img/svc/event-decor.jpg",
+    "title": "Decoration",
+    "author": "Chandersharma1987",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Decoration.JPG"
+  },
+  {
+    "file": "/img/svc/event-photography.jpg",
+    "title": "Wedding photographer preparing shot",
+    "author": "Mike Baird from Morro Bay, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wedding_photographer_preparing_shot.jpg"
+  },
+  {
+    "file": "/img/svc/event-planning-management.jpg",
+    "title": "Wedding reception tables and benches (Unsplash)",
+    "author": "Sweet Ice Cream Photography sweeticecreamphotography",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Wedding_reception_tables_and_benches_(Unsplash).jpg"
+  },
+  {
+    "file": "/img/svc/handyman-visit.jpg",
+    "title": "Sink repair by female plumber",
+    "author": "TWP Inc. | Decorative Mesh, Wire Mesh, and More!",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://www.flickr.com/photos/163882903@N04/43619960520"
+  },
+  {
+    "file": "/img/svc/home-maintenance-checkup.jpg",
+    "title": "NSA Souda Bay Safety Office Inspection (6268174)",
+    "author": "U.S. Navy photo by Joel Diller",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "source": "https://commons.wikimedia.org/wiki/File:NSA_Souda_Bay_Safety_Office_Inspection_(6268174).jpg"
+  },
+  {
+    "file": "/img/svc/wedding-planning.jpg",
+    "title": "A beautifully decorated wedding mandap, graced with the simplicity and richness of yellow and red hues.",
+    "author": "Makarand Mane",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0",
+    "source": "https://wordpress.org/photos/photo/25065bfd5a/"
+  },
+  {
+    "file": "/img/dishes/aloo-fry.jpg",
+    "title": "Potato fry Andhra Style",
+    "author": "United Hotel Management Academy",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Potato_fry_Andhra_Style.jpg"
+  },
+  {
+    "file": "/img/dishes/bagara-rice.jpg",
+    "title": "Bagar khana",
+    "author": "Bhaskaranaidu",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Bagar_khana.JPG"
+  },
+  {
+    "file": "/img/dishes/beans-poriyal.jpg",
+    "title": "Beans and carrot poriyal",
+    "author": "Nithyasrm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Beans_and_carrot_poriyal.JPG"
+  },
+  {
+    "file": "/img/dishes/bhindi-fry.jpg",
+    "title": "Bhindi Masala",
+    "author": "Monali.mishra",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Bhindi_Masala.jpg"
+  },
+  {
+    "file": "/img/dishes/bobbatlu.jpg",
+    "title": "Maharashtrian Puran Poli",
+    "author": "Usha Nagle",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Maharashtrian_Puran_Poli.jpg"
+  },
+  {
+    "file": "/img/dishes/butter-naan.jpg",
+    "title": "Butter Naan 2",
+    "author": "Ganesh Mohan T",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Butter_Naan_2.jpg"
+  },
+  {
+    "file": "/img/dishes/cabbage-poriyal.jpg",
+    "title": "Thoran - PXL 20200901 193743630.PORTRAIT",
+    "author": "Prashanth1983pv",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Thoran_-_PXL_20200901_193743630.PORTRAIT.jpg"
+  },
+  {
+    "file": "/img/dishes/chapati.jpg",
+    "title": "Chapathi Baji",
+    "author": "Yakshitha",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chapathi_Baji.jpg"
+  },
+  {
+    "file": "/img/dishes/curd-rice.jpg",
+    "title": "Curd Rice",
+    "author": "Sudharshan Shanmugasundaram",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Curd_Rice.jpg"
+  },
+  {
+    "file": "/img/dishes/curd.jpg",
+    "title": "Curd India",
+    "author": "Vivekdoshi11",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Curd_India.jpg"
+  },
+  {
+    "file": "/img/dishes/dondakaya-fry.jpg",
+    "title": "Ivy gourd fry",
+    "author": "Joli Rumi",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Ivy_gourd_fry.jpg"
+  },
+  {
+    "file": "/img/dishes/double-ka-meetha.jpg",
+    "title": "Shahi tukda or toast",
+    "author": "Hartej.hundal",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Shahi_tukda_or_toast.JPG"
+  },
+  {
+    "file": "/img/dishes/gajar-ka-halwa.jpg",
+    "title": "Gajar Ka Halwa - Indian Desert",
+    "author": "Zeel Patel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Gajar_Ka_Halwa_-_Indian_Desert.JPG"
+  },
+  {
+    "file": "/img/dishes/green-salad.jpg",
+    "title": "Salad by Juliet van Ree",
+    "author": "Jvanree",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Salad_by_Juliet_van_Ree.jpg"
+  },
+  {
+    "file": "/img/dishes/gulab-jamun.jpg",
+    "title": "Gulaab Jamun (homemade!)",
+    "author": "jsn.2k11",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Gulaab_Jamun_(homemade!).jpg"
+  },
+  {
+    "file": "/img/dishes/jeera-rice.jpg",
+    "title": "Dal Fry Tadka, Cumin Rice, Roasted Papad on the side",
+    "author": "Monali.mishra",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Dal_Fry_Tadka,_Cumin_Rice,_Roasted_Papad_on_the_side.jpg"
+  },
+  {
+    "file": "/img/dishes/lemon-rice.jpg",
+    "title": "Chitranna and Payasa",
+    "author": "Radhikapavan",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chitranna_and_Payasa.jpg"
+  },
+  {
+    "file": "/img/dishes/mineral-water.jpg",
+    "title": "Glass with Water",
+    "author": "Toukou Sousui 淙穂鶫箜",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://www.flickr.com/photos/62687403@N04/14032632716"
+  },
+  {
+    "file": "/img/dishes/papad.jpg",
+    "title": "Stack of papadums",
+    "author": "Windell H. Oskay",
+    "license": "CC BY 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+    "source": "https://commons.wikimedia.org/wiki/File:Stack_of_papadums.jpg"
+  },
+  {
+    "file": "/img/dishes/pickle.jpg",
+    "title": "Aavakaya",
+    "author": "Bhaskaranaidu",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Aavakaya.JPG"
+  },
+  {
+    "file": "/img/dishes/poori.jpg",
+    "title": "Plate of freshly prepared puris",
+    "author": "Scott Dexter from Brooklyn, US",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Plate_of_freshly_prepared_puris.jpg"
+  },
+  {
+    "file": "/img/dishes/pulihora-tamarind-rice.jpg",
+    "title": "Tamarind Rice (Puliyogare)",
+    "author": "Talupu",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Tamarind_Rice_(Puliyogare).jpg"
+  },
+  {
+    "file": "/img/dishes/qubani-ka-meetha.jpg",
+    "title": "Khobani Ka Meetha",
+    "author": "Miansari66",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Khobani_Ka_Meetha.JPG"
+  },
+  {
+    "file": "/img/dishes/rasmalai.jpg",
+    "title": "RAS MALAI, रस मलाई, رس ملائی",
+    "author": "Recipe with Dr Shalini",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:RAS_MALAI,_%E0%A4%B0%E0%A4%B8_%E0%A4%AE%E0%A4%B2%E0%A4%BE%E0%A4%88,_%D8%B1%D8%B3_%D9%85%D9%84%D8%A7%D8%A6%DB%8C.JPG"
+  },
+  {
+    "file": "/img/dishes/rumali-roti.jpg",
+    "title": "Rumali Roti South indian Style",
+    "author": "Denzil Sebastian",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Rumali_Roti_South_indian_Style.JPG"
+  },
+  {
+    "file": "/img/dishes/semiya-payasam.jpg",
+    "title": "Semiya Payasam Vermicelli Kheer",
+    "author": "Divya Kudua",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Semiya_Payasam_Vermicelli_Kheer.jpg"
+  },
+  {
+    "file": "/img/dishes/tandoori-roti.jpg",
+    "title": "Tandoori Roti in clay oven",
+    "author": "Kamalsahansi",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Tandoori_Roti_in_clay_oven.JPG"
+  },
+  {
+    "file": "/img/dishes/veg-dum-biryani.jpg",
+    "title": "Vegetable Biryani & Pomegranate Raita",
+    "author": "Monali.mishra",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Vegetable_Biryani_%26_Pomegranate_Raita.jpg"
+  },
+  {
+    "file": "/img/dishes/veg-pulao.jpg",
+    "title": "Veg Pulao with onion Raitha 02",
+    "author": "Nandhinikandhasamy",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Veg_Pulao_with_onion_Raitha_02.jpg"
+  },
+  {
+    "file": "/img/dishes/white-rice.jpg",
+    "title": "Cooked white rice",
+    "author": "Calgary Reviews from Calgary, Canada",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Cooked_white_rice.jpg"
+  },
+  {
+    "file": "/img/dishes/andhra-chicken-curry.jpg",
+    "title": "Andhra Chicken Curry - WCI-Day0-Dinner",
+    "author": "Sumitsurai",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Andhra_Chicken_Curry_-_WCI-Day0-Dinner.jpg"
+  },
+  {
+    "file": "/img/dishes/butter-chicken.jpg",
+    "title": "Chicken makhani",
+    "author": "stu_spivack",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_makhani.jpg"
+  },
+  {
+    "file": "/img/dishes/chicken-korma.jpg",
+    "title": "Chicken Korma 1",
+    "author": "TheCulinaryGeek",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_Korma_1.jpg"
+  },
+  {
+    "file": "/img/dishes/dal-makhani.jpg",
+    "title": "Dal Makhani.",
+    "author": "Miansari66",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Dal_Makhani..JPG"
+  },
+  {
+    "file": "/img/dishes/dal-tadka.jpg",
+    "title": "Dal Tadka-Delhi",
+    "author": "AugustineKajur",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Dal_Tadka-Delhi.jpg"
+  },
+  {
+    "file": "/img/dishes/egg-masala-curry.jpg",
+    "title": "Spicy Anda Curry",
+    "author": "https://onlybestrecipes.com/egg-curry-recipeegg-curry-recipe/",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Spicy_Anda_Curry.jpg"
+  },
+  {
+    "file": "/img/dishes/fish-curry.jpg",
+    "title": "Meen curry 2",
+    "author": "Kalakki at Malayalam Wikipedia",
+    "license": "CC BY-SA 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+    "source": "https://commons.wikimedia.org/wiki/File:Meen_curry_2.JPG"
+  },
+  {
+    "file": "/img/dishes/gongura-chicken.jpg",
+    "title": "Chicken spinach curry (424955518)",
+    "author": "pelican from Tokyo, Japan",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_spinach_curry_(424955518).jpg"
+  },
+  {
+    "file": "/img/dishes/gongura-mutton.jpg",
+    "title": "Palak Gosht",
+    "author": "Miansari66",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Palak_Gosht.JPG"
+  },
+  {
+    "file": "/img/dishes/mutton-curry.jpg",
+    "title": "Odia Mutton Curry (Mansha Tarkari)",
+    "author": "Satwik Cuttack",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Odia_Mutton_Curry_(Mansha_Tarkari).jpg"
+  },
+  {
+    "file": "/img/dishes/palakura-pappu.jpg",
+    "title": "Dal Palak Spinach and lentil curry (15914333462)",
+    "author": "Yummy O Yummy",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Dal_Palak_Spinach_and_lentil_curry_(15914333462).jpg"
+  },
+  {
+    "file": "/img/dishes/rasam.jpg",
+    "title": "Rasam Hot",
+    "author": "Miansari66",
+    "license": "Public domain",
+    "licenseUrl": "",
+    "source": "https://commons.wikimedia.org/wiki/File:Rasam_Hot.JPG"
+  },
+  {
+    "file": "/img/dishes/sambar.jpg",
+    "title": "Indian Sambar",
+    "author": "Samphotography",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Indian_Sambar.jpg"
+  },
+  {
+    "file": "/img/dishes/tomato-pappu.jpg",
+    "title": "Boiled yellow lentil tomato ginger garlic",
+    "author": "CNEcija12345",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Boiled_yellow_lentil_tomato_ginger_garlic.jpg"
+  },
+  {
+    "file": "/img/dishes/apollo-fish.jpg",
+    "title": "APOLLO FISH",
+    "author": "NEHAL NAZIM",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:APOLLO_FISH.jpg"
+  },
+  {
+    "file": "/img/dishes/chicken-65.jpg",
+    "title": "Chicken 65 (Dish)",
+    "author": "Amiyashrivastava",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_65_(Dish).jpg"
+  },
+  {
+    "file": "/img/dishes/chicken-tikka.jpg",
+    "title": "Chicken tikka in Araku Valley, Andhra Pradesh 01",
+    "author": "Satdeep Gill",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Chicken_tikka_in_Araku_Valley,_Andhra_Pradesh_01.jpg"
+  },
+  {
+    "file": "/img/dishes/hyderabadi-chicken-dum-biryani.jpg",
+    "title": "Nawabi Chicken Dum Biryani",
+    "author": "Ravichouhan208",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Nawabi_Chicken_Dum_Biryani.jpg"
+  },
+  {
+    "file": "/img/dishes/mutton-dum-biryani.jpg",
+    "title": "Lamb Biryani",
+    "author": "AKSHRAJJODHA",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Lamb_Biryani.jpg"
+  },
+  {
+    "file": "/img/dishes/mutton-seekh-kebab.jpg",
+    "title": "Seekh Kabab 1",
+    "author": "Miansari66",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Seekh_Kabab_1.JPG"
+  },
+  {
+    "file": "/img/dishes/pepper-chicken.jpg",
+    "title": "Pepper chicken 2",
+    "author": "Vis M",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Pepper_chicken_2.jpg"
+  },
+  {
+    "file": "/img/dishes/tandoori-chicken.jpg",
+    "title": "Tandoori Chicken 1",
+    "author": "Miansari66",
+    "license": "CC0 1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Tandoori_Chicken_1.JPG"
   }
 ]

@@ -46,3 +46,6 @@ next-env.d.ts
 # local SQLite databases
 prisma/*.db
 prisma/*.db-journal
+
+# private uploads (ID proofs)
+/storage

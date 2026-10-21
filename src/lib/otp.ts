@@ -79,3 +79,8 @@ export async function verifyLoginCode(phone: string, code: string): Promise<{ ok
   await db.otpCode.update({ where: { id: row.id }, data: { consumedAt: new Date() } });
   return { ok: true };
 }
+
+/** The visitor's IP. Behind nginx, the last X-Forwarded-For entry is the address nginx saw; earlier ones can be forged. */
+export function clientIp(h: Headers): string {
+  return (h.get("x-forwarded-for") ?? "").split(",").map((s) => s.trim()).filter(Boolean).pop() ?? h.get("x-real-ip") ?? "unknown";
+}

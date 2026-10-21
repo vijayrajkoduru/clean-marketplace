@@ -4,17 +4,23 @@ import { Suspense } from "react";
 import { getAllServices, getCategories } from "@/lib/catalog";
 import { ServiceCard } from "@/components/service-card";
 import { CategoryIcon } from "@/components/icons";
+import { strings, fmt } from "@/strings";
 
-export const metadata: Metadata = { title: "All services", description: "Every home service we offer, with prices." };
+export async function generateMetadata(): Promise<Metadata> {
+  const d = strings;
+  return { title: d.catalog.allTitle, description: d.catalog.allDescription };
+}
 
 async function Results({ searchParams }: { searchParams: PageProps<"/services">["searchParams"] }) {
   const sp = await searchParams;
   const q = (Array.isArray(sp.q) ? sp.q[0] : sp.q)?.trim().toLowerCase() ?? "";
   const [services, categories] = await Promise.all([getAllServices(), getCategories()]);
+  const d = strings;
+  const t = d.catalog;
   const words = q.split(/\s+/).filter(Boolean);
   const matches = words.length
     ? services.filter((s) => {
-        const hay = `${s.name} ${s.summary} ${s.categoryName}`.toLowerCase();
+        const hay = `${s.name} ${s.summary} ${s.categoryName} ${s.slug.replace(/-/g, " ")} ${s.categorySlug.replace(/-/g, " ")}`.toLowerCase();
         return words.every((w) => hay.includes(w));
       })
     : services;
@@ -22,7 +28,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/services">[
   if (q) {
     return (
       <section>
-        <h1 className="section-title">{matches.length ? `Results for "${q}"` : `No services match "${q}"`}</h1>
+        <h1 className="section-title">{fmt(matches.length ? t.resultsFor : t.noResults, { q })}</h1>
         {matches.length ? (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {matches.map((s) => (
@@ -30,7 +36,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/services">[
             ))}
           </div>
         ) : (
-          <p className="mt-3 text-muted">Try a simpler word like &quot;cleaning&quot;, &quot;AC&quot; or &quot;plumber&quot;, or browse the categories below.</p>
+          <p className="mt-3 text-muted">{t.tryAgain}</p>
         )}
       </section>
     );
@@ -38,7 +44,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/services">[
 
   return (
     <>
-      <h1 className="section-title">All services</h1>
+      <h1 className="section-title">{t.allTitle}</h1>
       {categories.map((c) => {
         const list = services.filter((s) => s.categorySlug === c.slug);
         if (!list.length) return null;
@@ -49,7 +55,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/services">[
                 <span className="grid size-9 place-items-center rounded-xl bg-brand-50 text-brand-700"><CategoryIcon name={c.icon} className="size-5" /></span>
                 {c.name}
               </h2>
-              <Link href={`/c/${c.slug}`} className="text-sm font-semibold text-brand-700">View category</Link>
+              <Link href={`/c/${c.slug}`} className="shrink-0 text-sm font-semibold text-brand-700">{t.viewCategory}</Link>
             </div>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {list.map((s) => (

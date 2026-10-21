@@ -7,11 +7,18 @@ import { site } from "@/config/site";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { formatAddress, partnerEarning, type AddressSnapshot } from "@/lib/booking";
-import { formatDateTime, formatDuration, parseList, rupees } from "@/lib/format";
+import { formatDateTime, formatDuration, parseList, rupees, serviceSummary } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 import { AcceptJob, JobActions } from "./job-actions";
+import { AutoRefresh } from "@/components/auto-refresh";
+import { unsettledBalance } from "@/lib/payouts";
+import { strings, fmt, plural } from "@/strings";
+import { MenuSummary } from "@/components/menu-summary";
+import { parseMenu } from "@/lib/menu-rules";
 
-export const metadata: Metadata = { title: "Partner dashboard", robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: strings.partner.metaTitle, robots: { index: false } };
+}
 
 const IST_OFFSET_MS = 330 * 60 * 1000;
 
@@ -29,14 +36,20 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-type JobItem = { serviceName: string; variantName: string; quantity: number; durationMins: number };
+type JobItem = { serviceName: string; variantName: string; quantity: number; durationMins: number; guests?: number | null; menu?: string | null };
 
 function JobItems({ items }: { items: JobItem[] }) {
   return (
     <ul className="mt-2 space-y-0.5 text-sm">
       {items.map((i, n) => (
         <li key={n}>
-          {i.serviceName} <span className="text-muted">· {i.variantName}{i.quantity > 1 ? ` x${i.quantity}` : ""} · {formatDuration(i.durationMins * i.quantity)}</span>
+          {i.serviceName}{" "}
+          <span className="text-muted">
+            · {i.variantName}
+            {i.quantity > 1 ? ` x${i.quantity}` : ""}
+            {i.guests ? ` · ${i.guests} guests` : ""} · {formatDuration(i.durationMins * i.quantity)}
+          </span>
+          {i.menu ? <MenuSummary lines={parseMenu(i.menu)} className="mb-2 mt-1" /> : null}
         </li>
       ))}
     </ul>
@@ -45,6 +58,8 @@ function JobItems({ items }: { items: JobItem[] }) {
 
 async function Dashboard() {
   const user = await requireUser("/partner");
+  const d = strings;
+  const t = d.partner;
   const partner = await db.partner.findUnique({ where: { userId: user.id }, include: { city: true } });
   if (!partner) redirect("/partner/join");
 
@@ -52,24 +67,26 @@ async function Dashboard() {
     return (
       <div className="card mt-6 max-w-xl p-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-bold">Application status</h2>
+          <h2 className="font-bold">{t.statusTitle}</h2>
           <StatusBadge status={partner.status} />
         </div>
         <p className="mt-2 text-sm text-muted">
-          {partner.status === "PENDING"
-            ? "Our team will call you to verify your ID and skills. You can take jobs once you are approved."
-            : `Your partner account is not active. Contact ${site.supportEmail} for help.`}
+          {partner.status === "PENDING" ? t.pending : fmt(t.inactive, { email: site.supportEmail })}
         </p>
-        <Link href="/partner/join" className="btn-outline mt-4">View application</Link>
+        <Link href="/partner/join" className="btn-outline mt-4">{t.viewApplication}</Link>
       </div>
     );
   }
 
   const now = new Date();
   const skills = parseList(partner.skills);
+  const [balance, payouts] = await Promise.all([
+    unsettledBalance(partner.id),
+    db.payout.findMany({ where: { partnerId: partner.id }, orderBy: { createdAt: "desc" }, take: 10, include: { _count: { select: { bookings: true } } } }),
+  ]);
   const [openRaw, mine, completedThisMonth, recent, ratingAgg] = await Promise.all([
     db.booking.findMany({
-      where: { cityId: partner.cityId, status: "CONFIRMED", partnerId: null, scheduledAt: { gt: now } },
+      where: { cityId: partner.cityId, status: "CONFIRMED", partnerId: null, scheduledAt: { gt: now }, customerId: { not: partner.userId } },
       orderBy: { scheduledAt: "asc" },
       take: 50,
       include: { items: { include: { service: { select: { categoryId: true } } } } },
@@ -98,15 +115,16 @@ async function Dashboard() {
 
   return (
     <div className="mt-6 space-y-8">
+      <AutoRefresh seconds={30} />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="Earned this month" value={rupees(earned)} />
-        <Stat label="Jobs this month" value={String(completedThisMonth.length)} />
-        <Stat label="Upcoming jobs" value={String(mine.length)} />
-        <Stat label="Your rating" value={rating ? `${rating.toFixed(1)} (${ratingAgg._count._all})` : "No ratings"} />
+        <Stat label={t.earnedMonth} value={rupees(earned)} />
+        <Stat label={t.jobsMonth} value={String(completedThisMonth.length)} />
+        <Stat label={t.upcoming} value={String(mine.length)} />
+        <Stat label={t.rating} value={rating ? `${rating.toFixed(1)} (${ratingAgg._count._all})` : t.noRatings} />
       </div>
 
       <section>
-        <h2 className="text-lg font-bold">My jobs</h2>
+        <h2 className="text-lg font-bold">{t.myJobs}</h2>
         {mine.length ? (
           <ul className="mt-3 space-y-3">
             {mine.map((b) => {
@@ -128,11 +146,11 @@ async function Dashboard() {
                   {b.notes ? <p className="mt-3 flex gap-2 rounded-xl bg-surface p-3 text-sm text-muted"><StickyNote className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{b.notes}</p> : null}
                   <p className="mt-3 text-sm">
                     {b.paymentMethod === "PAY_AFTER_SERVICE" && b.paymentStatus !== "PAID" ? (
-                      <>Collect <span className="font-bold">{rupees(b.total)}</span> after the job.</>
+                      <span className="font-semibold">{fmt(t.collect, { amount: rupees(b.total) })}</span>
                     ) : (
-                      <span className="text-emerald-700">Customer has paid online. Do not collect money.</span>
+                      <span className="text-emerald-700">{t.paidOnline}</span>
                     )}
-                    <span className="text-muted"> Your earning: {rupees(partnerEarning(b.subtotal))}</span>
+                    <span className="text-muted"> {fmt(t.yourEarning, { amount: rupees(partnerEarning(b.subtotal)) })}</span>
                   </p>
                   <JobActions code={b.code} status={b.status} />
                 </li>
@@ -140,12 +158,12 @@ async function Dashboard() {
             })}
           </ul>
         ) : (
-          <p className="mt-2 text-sm text-muted">No jobs right now. Accept an open job below.</p>
+          <p className="mt-2 text-sm text-muted">{t.noJobs}</p>
         )}
       </section>
 
       <section>
-        <h2 className="text-lg font-bold">Open jobs in {partner.city.name}</h2>
+        <h2 className="text-lg font-bold">{fmt(t.openJobs, { city: partner.city.name })}</h2>
         {open.length ? (
           <ul className="mt-3 grid gap-3 md:grid-cols-2">
             {open.map((b) => {
@@ -164,23 +182,62 @@ async function Dashboard() {
             })}
           </ul>
         ) : (
-          <p className="mt-2 text-sm text-muted">No open jobs that match your skills right now. New jobs appear here as customers book.</p>
+          <p className="mt-2 text-sm text-muted">{t.noOpen}</p>
         )}
+      </section>
+
+      <section className="card p-5">
+        <h2 className="text-lg font-bold">{t.payouts}</h2>
+        {balance.jobs ? (
+          <p className="mt-2 text-sm">
+            {plural(balance.jobs, t.unsettledOne, t.unsettledMany)} {fmt(t.balanceParts, { earnings: rupees(balance.earnings), collected: rupees(balance.collected) })}{" "}
+            {balance.balance > 0 ? (
+              <span className="font-semibold text-emerald-700">{fmt(t.weOwe, { amount: rupees(balance.balance) })}</span>
+            ) : balance.balance < 0 ? (
+              <span className="font-semibold text-amber-700">{fmt(t.youOwe, { amount: rupees(-balance.balance) })}</span>
+            ) : (
+              <span className="font-semibold">{t.even}</span>
+            )}
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted">{t.settled}</p>
+        )}
+        {payouts.length ? (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="text-xs uppercase tracking-wide text-muted">
+                <tr><th className="py-2 pr-3">{t.colDate}</th><th className="py-2 pr-3">{t.colJobs}</th><th className="py-2 pr-3">{t.colEarnings}</th><th className="py-2 pr-3">{t.colCollected}</th><th className="py-2 pr-3">{t.colSettled}</th><th className="py-2">{t.colReference}</th></tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {payouts.map((p) => (
+                  <tr key={p.id}>
+                    <td className="whitespace-nowrap py-2 pr-3">{formatDateTime(p.createdAt)}</td>
+                    <td className="py-2 pr-3">{p._count.bookings}</td>
+                    <td className="py-2 pr-3">{rupees(p.earnings)}</td>
+                    <td className="py-2 pr-3">{rupees(p.collected)}</td>
+                    <td className="py-2 pr-3 font-medium">{p.amount > 0 ? fmt(t.paidToYou, { amount: rupees(p.amount) }) : p.amount < 0 ? fmt(t.paidByYou, { amount: rupees(-p.amount) }) : t.evenShort}</td>
+                    <td className="py-2 text-muted">{p.reference ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
       </section>
 
       {recent.length ? (
         <section>
-          <h2 className="text-lg font-bold">Recently completed</h2>
+          <h2 className="text-lg font-bold">{t.recent}</h2>
           <div className="mt-3 overflow-x-auto rounded-2xl border border-line bg-white">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface text-xs uppercase tracking-wide text-muted">
-                <tr><th className="px-4 py-3">Date</th><th className="px-4 py-3">Job</th><th className="px-4 py-3">Rating</th><th className="px-4 py-3 text-right">Earning</th></tr>
+                <tr><th className="px-4 py-3">{t.colDate}</th><th className="px-4 py-3">{t.colJob}</th><th className="px-4 py-3">{t.colRating}</th><th className="px-4 py-3 text-right">{t.colEarning}</th></tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {recent.map((b) => (
                   <tr key={b.id}>
                     <td className="whitespace-nowrap px-4 py-3">{formatDateTime(b.scheduledAt)}</td>
-                    <td className="px-4 py-3">{b.items.map((i) => i.serviceName).join(", ")}</td>
+                    <td className="px-4 py-3">{serviceSummary(b.items)}</td>
                     <td className="px-4 py-3">{b.review ? `${b.review.rating} / 5` : "-"}</td>
                     <td className="px-4 py-3 text-right font-medium">{rupees(partnerEarning(b.subtotal))}</td>
                   </tr>
@@ -194,10 +251,11 @@ async function Dashboard() {
   );
 }
 
-export default function PartnerPage() {
+export default async function PartnerPage() {
+  const d = strings;
   return (
     <div className="container-page py-8 sm:py-10">
-      <h1 className="text-2xl font-bold sm:text-3xl">Partner dashboard</h1>
+      <h1 className="text-2xl font-bold sm:text-3xl">{d.partner.title}</h1>
       <Suspense fallback={<div className="mt-6 h-96 animate-pulse rounded-2xl bg-surface" />}>
         <Dashboard />
       </Suspense>
