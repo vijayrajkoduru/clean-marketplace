@@ -72,7 +72,8 @@ export type Compose = (t: Strings["notify"], when: (date: Date) => string) => Me
 export async function notifyUser(userId: string, message: Message | Compose): Promise<void> {
   try {
     const user = await db.user.findUnique({ where: { id: userId }, select: { phone: true } });
-    if (!user) return;
+    // Deleted accounts keep a placeholder instead of a phone number and get no messages.
+    if (!user || !/^[6-9]\d{9}$/.test(user.phone)) return;
     const msg = typeof message === "function" ? message(strings.notify, formatDateTime) : message;
     await db.notification.create({ data: { userId, title: msg.title, body: msg.body, link: msg.link ?? null } });
     if (whatsappEnabled()) await sendWhatsApp(user.phone, `${msg.title}. ${msg.body}`);

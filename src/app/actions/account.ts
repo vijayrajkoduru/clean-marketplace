@@ -1,7 +1,8 @@
 "use server";
 
 import { refresh } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { endSession, getCurrentUser } from "@/lib/auth";
 import * as profile from "@/lib/profile";
 
 export type FormState = { ok?: boolean; error?: string; message?: string };
@@ -29,6 +30,17 @@ export async function addAddress(_: FormState, form: FormData): Promise<FormStat
   if (!r.ok) return { error: r.error };
   refresh();
   return { ok: true, message: "Address saved." };
+}
+
+/** Deletes the signed-in customer's account, after they ticked the confirmation box. */
+export async function deleteMyAccount(_: FormState, form: FormData): Promise<FormState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Please log in again." };
+  if (form.get("confirm") !== "on") return { error: "Tick the box to confirm." };
+  const r = await profile.deleteAccount(user);
+  if (!r.ok) return { error: r.error };
+  await endSession("site");
+  redirect("/account-deleted");
 }
 
 export async function deleteAddress(id: string): Promise<void> {

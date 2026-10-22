@@ -9,7 +9,7 @@ import { getCities } from "@/lib/catalog";
 import { formatDate, rupees } from "@/lib/format";
 import { activePlus } from "@/lib/membership";
 import { referralCodeFor, walletBalance } from "@/lib/wallet";
-import { AddAddressForm, DeleteAddressButton, ProfileForm } from "./account-forms";
+import { AddAddressForm, DeleteAccountForm, DeleteAddressButton, ProfileForm } from "./account-forms";
 import { ReferLink } from "./refer-card";
 import { strings, fmt, plural, type Strings } from "@/strings";
 
@@ -103,6 +103,12 @@ async function AccountView() {
           <AddAddressForm cities={cities.map((c) => ({ id: c.id, name: c.name, state: c.state }))} />
         </section>
       </div>
+
+      <section className="card p-5 sm:p-6" aria-labelledby="delete-account">
+        <h2 id="delete-account" className="text-lg font-bold">{t.deleteTitle}</h2>
+        <p className="mt-2 max-w-3xl text-sm text-muted">{t.deleteText}</p>
+        <DeleteAccountForm />
+      </section>
     </div>
   );
 }

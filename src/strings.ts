@@ -489,6 +489,16 @@ export const strings = {
     cancel: "Cancel",
     removeConfirm: "Remove this address?",
     removeAddress: "Remove address",
+    deleteTitle: "Delete account",
+    deleteText:
+      "This removes your name, email, mobile number, saved addresses, credit and notifications, and logs you out on every device. Past bookings and their invoices are kept, as tax law requires. This cannot be undone.",
+    deleteConfirm: "I understand that my account will be deleted for good.",
+    deleteButton: "Delete my account",
+    deleting: "Deleting...",
+    deletedMetaTitle: "Account deleted",
+    deletedTitle: "Your account is deleted",
+    deletedText: "Your details are removed and you are logged out. You can sign up again with the same number at any time.",
+    backHome: "Back to home",
   },
   notifications: {
     metaTitle: "Notifications",

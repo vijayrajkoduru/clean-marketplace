@@ -3,7 +3,7 @@
 import { submitKeepingValues } from "@/lib/forms";
 import { useActionState, useState, useTransition } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { addAddress, deleteAddress, saveProfile, type FormState } from "@/app/actions/account";
+import { addAddress, deleteAddress, deleteMyAccount, saveProfile, type FormState } from "@/app/actions/account";
 import { AddressFields, type CityChoice } from "@/components/address-fields";
 import { strings } from "@/strings";
 
@@ -32,6 +32,23 @@ export function ProfileForm({ name, email, phone }: { name: string; email: strin
       </div>
       <Message state={state} />
       <button className="btn-primary" disabled={saving}>{saving ? t.saving : t.saveProfile}</button>
+    </form>
+  );
+}
+
+export function DeleteAccountForm() {
+  const t = strings.account;
+  const [state, act, pending] = useActionState<FormState, FormData>(deleteMyAccount, {});
+  return (
+    <form action={act} className="mt-4 space-y-4">
+      <label className="flex items-start gap-2.5 text-sm">
+        <input type="checkbox" name="confirm" required className="mt-0.5 size-4 shrink-0 accent-danger" />
+        <span>{t.deleteConfirm}</span>
+      </label>
+      <Message state={state} />
+      <button className="btn border border-danger bg-white text-danger hover:bg-danger hover:text-white" disabled={pending}>
+        {pending ? t.deleting : t.deleteButton}
+      </button>
     </form>
   );
 }

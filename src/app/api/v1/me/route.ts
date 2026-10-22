@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ok, preflight, readBody, result, withUser } from "@/lib/api";
 import { accountView } from "@/lib/app-views";
-import { saveProfile } from "@/lib/profile";
+import { deleteAccount, saveProfile } from "@/lib/profile";
 
 export const OPTIONS = preflight;
 
@@ -17,4 +17,9 @@ export async function PATCH(request: Request) {
     if ("response" in body) return body.response;
     return result(await saveProfile(user, body.data));
   });
+}
+
+/** Deletes the account (see deleteAccount). The app's token stops working at once. */
+export async function DELETE(request: Request) {
+  return withUser(request, async (user) => result(await deleteAccount(user)));
 }

@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       <h2>Your rights</h2>
       <p>
         You can ask to see, correct or delete your personal data, or withdraw consent, by writing to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.
-        You can correct your name, email and addresses yourself in My account. If you are not satisfied with our reply, you can complain to the Data Protection Board of India.
+        You can correct your name, email and addresses yourself in My account, and delete your account there or in the app. If you are not satisfied with our reply, you can complain to the Data Protection Board of India.
       </p>
 
       <h2>Security</h2>

@@ -3,7 +3,7 @@
 A complete website for booking home services, in the style of Urban Company. It has four parts:
 
 - **Customer site.** Customers browse 9 categories and 43 services with fixed prices, use a cart with coupons, pick an address and a time slot, and pay online or after the service. They can track a booking, reschedule or cancel it, and rate it.
-- **Login.** Login is by mobile number and a 6-digit SMS code. There are no passwords.
+- **Login.** Login is by mobile number and a 6-digit SMS code. There are no passwords. Customers can delete their account in My account or in the app. Finished bookings and their invoices are kept for tax records, with the name and address they were issued to; the phone number is removed from them.
 - **Partner portal.** Professionals apply online. Once approved, they see open jobs in their city that match their skills and accept them. They then mark themselves on the way, start the job with the customer's 4-digit start code, and complete it. The portal also shows their earnings.
 - **Admin panel.** Admins get an overview of the numbers, can search bookings and assign or change them, and handle refunds. They also review professionals and edit services, prices, categories, coupons and cities.
 
@@ -217,6 +217,7 @@ The native app uses the website's app API under `/api/v1`. It signs in with a ph
 | `GET /portfolio`, `GET /portfolio/[id]` | "Our work" photos (`?category=<slug>`, `?limit=<n>`), and one photo with more like it |
 | `POST /quote`, `GET /slots?cityId=` | Price a cart; list open time slots |
 | `GET`/`PATCH /me`, `GET`/`POST /addresses`, `DELETE /addresses/[id]` | Account and saved addresses |
+| `DELETE /me` | Delete the account. Refused while a booking is open, or while a professional has unfinished or unpaid jobs |
 | `GET`/`POST /bookings`, `GET /bookings/[code]` | List, place and view bookings |
 | `POST /bookings/[code]/cancel`, `/reschedule`, `/rate`, `/payment` | Change a booking |
 | `GET`/`POST /notifications` | Read notifications; mark them all read |
